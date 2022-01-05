@@ -36,6 +36,7 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepo.findByUsername(username);
+        log.info("Username: {}", username);
         if (user == null) {
             log.error("User not found in the database");
             throw new UsernameNotFoundException("User not found in the database");
@@ -48,7 +49,7 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
         });
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
-                user.getHashPassword(),
+                user.getPassword(),
                 authorities
         );
     }
@@ -56,7 +57,7 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
     @Override
     public User saveUser(User user) {
         log.info("Saving new user {} to the database", user.getUsername());
-        user.setHashPassword(passwordEncoder.encode(user.getHashPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
 

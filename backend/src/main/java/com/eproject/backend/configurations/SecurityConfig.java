@@ -3,6 +3,7 @@ package com.eproject.backend.configurations;
 import com.eproject.backend.common.ERole;
 import com.eproject.backend.filters.CustomAuthenticationFilter;
 import com.eproject.backend.filters.CustomAuthorizationFilter;
+import com.eproject.backend.services.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,12 +25,12 @@ import static org.springframework.http.HttpMethod.POST;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserDetailsService userDetailsService;
+    private final UserServiceImpl UserServiceImpl;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+        auth.userDetailsService(UserServiceImpl).passwordEncoder(bCryptPasswordEncoder);
     }
 
     @Override
@@ -38,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/api/login/**", "/api/user/refresh-token").permitAll();
+        http.authorizeRequests().antMatchers("/api/login", "/api/user/refresh-token").permitAll();
         http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAnyAuthority(ERole.ROLE_USER.toString());
         http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority(ERole.ROLE_ADMIN.toString());
         http.authorizeRequests().anyRequest().authenticated();
