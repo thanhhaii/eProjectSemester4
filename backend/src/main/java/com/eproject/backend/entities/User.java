@@ -49,12 +49,12 @@ public class User implements java.io.Serializable {
     @Temporal(TemporalType.DATE)
     @CreatedDate
     @Column(name = "created_at", updatable = false)
-    private Date createdAt;
+    private Date createdAt = new Date();
 
     @Temporal(TemporalType.DATE)
     @LastModifiedDate
     @Column(name = "updated_at")
-    private Date updatedAt;
+    private Date updatedAt = new Date();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<Collection> collections = new HashSet<Collection>(0);
@@ -80,9 +80,9 @@ public class User implements java.io.Serializable {
         this.verifyEmail = verifyEmail;
     }
 
-    public User(String username, String email, String hashPassword, String profile, boolean verifyEmail) {
+    public User(String username, String email, String password, String profile, boolean verifyEmail) {
         this.email = email;
-        this.password = hashPassword;
+        this.password = password;
         this.profile = profile;
         this.username = username;
         this.verifyEmail = verifyEmail;
@@ -104,4 +104,8 @@ public class User implements java.io.Serializable {
         this.userRoles = userRoles;
     }
 
+    @PreUpdate
+    public void setUpdatedAt() {
+        this.updatedAt = new Date();
+    }
 }

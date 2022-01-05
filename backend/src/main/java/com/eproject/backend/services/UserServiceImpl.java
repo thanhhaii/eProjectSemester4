@@ -1,5 +1,6 @@
 package com.eproject.backend.services;
 
+import com.eproject.backend.dtos.UserPrinciple;
 import com.eproject.backend.entities.Role;
 import com.eproject.backend.entities.User;
 import com.eproject.backend.entities.UserRole;
@@ -10,7 +11,6 @@ import com.eproject.backend.repositories.UserRoleRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,7 +34,7 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserPrinciple loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepo.findByUsername(username);
         log.info("Username: {}", username);
         if (user == null) {
@@ -47,7 +47,8 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
         user.getUserRoles().forEach(role -> {
             authorities.add(new SimpleGrantedAuthority(role.getRole().getName()));
         });
-        return new org.springframework.security.core.userdetails.User(
+        return new UserPrinciple(
+                user.getId(),
                 user.getUsername(),
                 user.getPassword(),
                 authorities
