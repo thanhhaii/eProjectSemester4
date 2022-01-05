@@ -1,6 +1,6 @@
 export interface HomePageContainerProps {}
 
 const HomePageContainer = (props: HomePageContainerProps) => {
-  return <></>;
-};
-export default HomePageContainer;
+  return <></>
+}
+export default HomePageContainer
