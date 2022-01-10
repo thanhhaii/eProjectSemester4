@@ -1,8 +1,11 @@
 import React from "react"
 import LoginContainer from "../../container/LoginPage"
+import { withEmptyLayout } from "../../components/EmptyLayout"
 
-function LoginPage() {
-  return <LoginContainer />
-}
+const LoginPage = withEmptyLayout(
+  function LoginPage() {
+    return <LoginContainer />
+  },
+)
 
 export default LoginPage

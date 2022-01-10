@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react"
 import classNames from "classnames"
-import styles from "./formUserLayout.module.scss"
+import styles from "./FormUserLayout.module.scss"
 import Image from "next/image"
 import ImageLogin from "public/images/login.jpg"
 
@@ -27,7 +27,7 @@ function FormUserLayout(props: FormUserLayoutProps) {
               </div>
             </div>
             <div className="col-5 p-2">
-              {children}
+              {children}yd
             </div>
           </div>
         </div>

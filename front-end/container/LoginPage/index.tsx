@@ -2,6 +2,8 @@ import React, { useCallback, useState } from "react"
 import FormUserLayout from "../../components/Layout/FormUserLayout"
 import { Formik, Field, Form } from "formik"
 import { LoginFormProps } from "../../models/FormValue"
+import Link from "components/Link"
+import pageUrls from "../../services/pageUrls"
 
 export interface LoginContainerProps {
 
@@ -14,6 +16,7 @@ const initialValue: LoginFormProps = {
 
 function LoginContainer(props: LoginContainerProps) {
   const [isShowPassword, setShowPassword] = useState<boolean>(false)
+
   const handleSubmit = useCallback((values: LoginFormProps) => {
     console.log(values)
   }, [])
@@ -32,20 +35,20 @@ function LoginContainer(props: LoginContainerProps) {
                     <hr className="my-3" />
                   </div>
                   <div className="col-12 mb-3">
-                    <label htmlFor="username" className="form-label h6">Username</label>
+                    <label htmlFor="username" className="form-label">Username</label>
                     <Field
                       type="text"
-                      className="form-control form-control-lg fw-light"
+                      className="form-control fw-light"
                       placeholder="Username"
                       name="username"
                       id="username"
                     />
                   </div>
                   <div className="col-12">
-                    <label htmlFor="password" className="form-label h6">Password</label>
+                    <label htmlFor="password" className="form-label">Password</label>
                     <Field
                       type={isShowPassword ? "text" : "password"}
-                      className="form-control form-control-lg fw-light"
+                      className="form-control fw-light"
                       placeholder="Password"
                       id="password"
                       name="password"
@@ -58,14 +61,19 @@ function LoginContainer(props: LoginContainerProps) {
                         className="form-check-input me-2"
                         checked={isShowPassword}
                         onChange={(e) => setShowPassword(e.target.checked)} />
-                      <label htmlFor="showPassword" className="form-label h6">Show password</label>
+                      <label htmlFor="showPassword" className="form-label">Show password</label>
                     </div>
-                    <h6>Forgot Password?</h6>
+                    <Link href={pageUrls.forgotPasswordPage} className="mb-0">Forgot Password?</Link>
                   </div>
-                  <div className="col-12">
+                  <div className="col-12 mb-4">
                     <button className="btn btn-primary w-100" type="submit">
                       Sign In
                     </button>
+                  </div>
+                  <div className="col-12">
+                    {/* eslint-disable-next-line react/no-unescaped-entities */}
+                    <p className="small">Don't have an account? <Link href={pageUrls.registerPage} className="fw-bold">Sign
+                      up for free</Link></p>
                   </div>
                 </div>
               </div>
