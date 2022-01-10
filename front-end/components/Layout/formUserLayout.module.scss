@@ -1,0 +1,10 @@
+.formLayout {
+  border-radius: 20px;
+  overflow: hidden;
+  .box {
+    height: 75vh;
+    &Image {
+      height: 100%;
+    }
+  }
+}
