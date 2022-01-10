@@ -65,13 +65,12 @@ function LoginContainer(props: LoginContainerProps) {
                     </div>
                     <Link href={pageUrls.forgotPasswordPage} className="mb-0">Forgot Password?</Link>
                   </div>
-                  <div className="col-12 mb-4">
+                  <div className="col-12 mb-3">
                     <button className="btn btn-primary w-100" type="submit">
                       Login
                     </button>
                   </div>
                   <div className="col-12">
-                    {/* eslint-disable-next-line react/no-unescaped-entities */}
                     <p className="small">Don't have an account? <Link href={pageUrls.registerPage} className="fw-bold">Register for free</Link></p>
                   </div>
                 </div>

@@ -12,3 +12,8 @@ export interface RegisterFormProps {
 export interface ForgotPasswordFormProps {
   email: string
 }
+
+export interface ResetPasswordFormProps {
+  newPassword: string
+  confirmPassword: string
+}

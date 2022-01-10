@@ -1,7 +1,7 @@
-import React, { useCallback, useState } from "react"
+import React, { useCallback } from "react"
 import FormUserLayout from "../../components/Layout/FormUserLayout"
 import { Formik, Field, Form } from "formik"
-import { ForgotPasswordFormProps, LoginFormProps } from "../../models/FormValue"
+import { ForgotPasswordFormProps } from "../../models/FormValue"
 import Link from "components/Link"
 import pageUrls from "../../services/pageUrls"
 
@@ -15,7 +15,7 @@ const initialValue: ForgotPasswordFormProps = {
 
 function ForgotPasswordContainer(props: ForgotPasswordContainerProps) {
   const handleSubmit = useCallback((values: ForgotPasswordFormProps) => {
-    console.log(values)
+    console.log(values )
   }, [])
 
   return (
