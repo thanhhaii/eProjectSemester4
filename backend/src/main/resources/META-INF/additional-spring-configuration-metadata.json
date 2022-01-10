@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "cloud_name",
+      "type": "java.lang.String",
+      "description": "Description for cloud_name."
+  }
+] }

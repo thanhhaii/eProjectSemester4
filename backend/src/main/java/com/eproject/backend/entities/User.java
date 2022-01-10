@@ -44,7 +44,7 @@ public class User implements java.io.Serializable {
     private String profile;
 
     @Column(name = "verify_email", nullable = false)
-    private boolean verifyEmail;
+    private boolean verifyEmail = false;
 
     @Temporal(TemporalType.DATE)
     @CreatedDate
@@ -68,16 +68,10 @@ public class User implements java.io.Serializable {
     public User() {
     }
 
-    public User(String id, Date createdAt, String email, String hashPassword, String profile,
-                Date updatedAt, String username, boolean verifyEmail) {
-        this.id = id;
-        this.createdAt = createdAt;
-        this.email = email;
-        this.password = hashPassword;
-        this.profile = profile;
-        this.updatedAt = updatedAt;
+    public User(String username, String email, String password) {
         this.username = username;
-        this.verifyEmail = verifyEmail;
+        this.email = email;
+        this.password = password;
     }
 
     public User(String username, String email, String password, String profile, boolean verifyEmail) {

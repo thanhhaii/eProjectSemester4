@@ -1,6 +1,8 @@
 package com.eproject.backend.entities;
 // Generated Jan 3, 2022, 8:04:04 PM by Hibernate Tools 5.1.10.Final
 
+import com.eproject.backend.common.TokenType;
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Date;
@@ -11,24 +13,8 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "token", catalog = "photoshare")
+@Data
 public class Token implements java.io.Serializable {
-
-	private String id;
-	private User user;
-	private Date expireAt;
-	private Date issuedAt;
-	private Date notBefore;
-
-	public Token() {
-	}
-
-	public Token(String id, User user, Date expireAt, Date issuedAt, Date notBefore) {
-		this.id = id;
-		this.user = user;
-		this.expireAt = expireAt;
-		this.issuedAt = issuedAt;
-		this.notBefore = notBefore;
-	}
 
 	@Id
 
@@ -38,52 +24,29 @@ public class Token implements java.io.Serializable {
 			name = "UUID",
 			strategy = "org.hibernate.id.UUIDGenerator"
 	)
-	public String getId() {
-		return this.id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
+	private String id;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
-	public User getUser() {
-		return this.user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
+	private User user;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "expire_at", nullable = false, length = 10)
-	public Date getExpireAt() {
-		return this.expireAt;
-	}
-
-	public void setExpireAt(Date expireAt) {
-		this.expireAt = expireAt;
-	}
+	private Date expireAt;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "issued_at", nullable = false, length = 10)
-	public Date getIssuedAt() {
-		return this.issuedAt;
+	private Date issuedAt = new Date();
+
+	@Column(name = "token_type", nullable = false, length = 1)
+	private int tokenType = TokenType.TYPE_TOKEN_USER;
+
+	public Token() {
 	}
 
-	public void setIssuedAt(Date issuedAt) {
-		this.issuedAt = issuedAt;
-	}
-
-	@Temporal(TemporalType.DATE)
-	@Column(name = "not_before", nullable = false, length = 10)
-	public Date getNotBefore() {
-		return this.notBefore;
-	}
-
-	public void setNotBefore(Date notBefore) {
-		this.notBefore = notBefore;
+	public Token(User user, Date expireAt, int tokenType) {
+		this.user = user;
+		this.expireAt = expireAt;
+		this.tokenType = tokenType;
 	}
 
 }

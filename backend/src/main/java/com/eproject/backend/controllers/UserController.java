@@ -1,67 +1,77 @@
 package com.eproject.backend.controllers;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.eproject.backend.dtos.MessageResponse;
-import com.eproject.backend.dtos.RoleToUserForm;
-import com.eproject.backend.dtos.SignUp;
-import com.eproject.backend.entities.Role;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.eproject.backend.common.TokenType;
+import com.eproject.backend.common.exception.EmailExistException;
+import com.eproject.backend.common.exception.UserNameExistException;
+import com.eproject.backend.dtos.*;
+import com.eproject.backend.dtos.User.*;
 import com.eproject.backend.entities.User;
+import com.eproject.backend.helpers.mail.SendMailHelper;
+import com.eproject.backend.helpers.token.JwtUtils;
+import com.eproject.backend.services.ITokenService;
 import com.eproject.backend.services.IUserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.net.URI;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final IUserService iUserService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ITokenService iTokenService;
+    private final JavaMailSender javaMailSender;
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers() {
         return ResponseEntity.ok().body(iUserService.getUsers());
     }
 
-    @PostMapping("/user/sign-up")
-    public ResponseEntity<?> signUp(@RequestBody SignUp signUp) {
+    @PostMapping("/")
+    public ResponseEntity<?> register(@Validated @RequestBody SignUp signUp) {
         try {
-
+            String passwordEncoder = bCryptPasswordEncoder.encode(signUp.getPassword());
+            User user = new User(signUp.getUsername(), signUp.getEmail(), passwordEncoder);
+            User userCreate = iUserService.saveUser(user);
             URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/sign-up").toUriString());
-            return ResponseEntity.created(uri).build();
+            return ResponseEntity.created(uri).body(userCreate.getId());
+        } catch (UserNameExistException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new MessageResponse("Username is exist!"));
+        } catch (EmailExistException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new MessageResponse("Email is exist!"));
         } catch (Exception e) {
             return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PostMapping("/user/save")
-    public ResponseEntity<User> saveUser(@RequestBody User user) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
-        return ResponseEntity.created(uri).body(iUserService.saveUser(user));
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getMe() {
+        UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext();
+        UserResponse userResponse = iUserService.getUserByID(userPrinciple.getId());
+        return ResponseEntity.ok(userResponse);
     }
 
-    @PostMapping("/role/save")
-    public ResponseEntity<Role> saveRole(@RequestBody Role role) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
-        return ResponseEntity.created(uri).body(iUserService.saveRole(role));
+    @PutMapping("/")
+    public ResponseEntity<?> updateProfile(@RequestBody UserProfileUpdate userProfileUpdate) {
+        try {
+            UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext();
+            iUserService.updateProfileUser(userProfileUpdate, userPrinciple.getId());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
     }
 
     @PostMapping("/role/add-to-user")
@@ -70,41 +80,67 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/user/refresh-token")
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            try {
-                String refresh_token = authorizationHeader.substring("Bearer ".length());
-                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-                JWTVerifier verifier = JWT.require(algorithm).build();
-                DecodedJWT decodedJWT = verifier.verify(refresh_token);
-                String username = decodedJWT.getSubject();
-                User user = iUserService.getUser(username);
-                String accessToken = JWT.create()
-                        .withSubject(user.getUsername())
-                        .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
-                        .withIssuer(request.getRequestURL().toString())
-                        .withClaim("roles", user.getUserRoles().stream().map(role -> {
-                            return role.getRole().getName();
-                        }).collect(Collectors.toList()))
-                        .sign(algorithm);
-                Map<String, String> tokens = new HashMap<>();
-                tokens.put("access_token", accessToken);
-                tokens.put("refresh_token", refresh_token);
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), tokens);
-            } catch (Exception exception) {
-                response.setHeader("error", exception.getMessage());
-                response.setStatus(FORBIDDEN.value());
-                //response.sendError(FORBIDDEN.value());
-                Map<String, String> error = new HashMap<>();
-                error.put("error_message", exception.getMessage());
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPasswordByEmail(@RequestBody UserEmailRequest userEmailRequest) {
+        try {
+            if (iUserService.checkEmailExist(userEmailRequest.getEmail())) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Email is not used"));
             }
-        } else {
-            throw new RuntimeException("Refresh token is missing");
+            String token = iTokenService.generateTokenIncludeUserID(userEmailRequest.getEmail(), TokenType.TYPE_RESET_PASSWORD);
+            SendMailHelper sendMailHelper = new SendMailHelper();
+            sendMailHelper.sendHTMLMail(token, userEmailRequest.getEmail(), javaMailSender);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(e.getMessage()));
         }
     }
+
+    @PutMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody UserResetPassword userResetPassword) {
+        try {
+            JwtUtils jwtUtils = new JwtUtils(userResetPassword.getToken());
+            if (jwtUtils.validateJwtToken()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+            String userID = jwtUtils.getSubjectToken();
+            iUserService.resetPassword(userID, userResetPassword.getNewPassword());
+            return ResponseEntity.ok().build();
+        } catch (TokenExpiredException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse(e.getMessage()));
+        }
+
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> sendMailVerifyAccount(@RequestBody UserEmailRequest userEmailRequest) {
+        try {
+            if (iUserService.checkEmailExist(userEmailRequest.getEmail())) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Email is not used"));
+            }
+            String token = iTokenService.generateTokenIncludeUserID(userEmailRequest.getEmail(), TokenType.TYPE_ACTIVE_ACCOUNT);
+            SendMailHelper sendMailHelper = new SendMailHelper();
+            sendMailHelper.sendHTMLMail(token, userEmailRequest.getEmail(), javaMailSender);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+    @PutMapping("/verify-email")
+    public ResponseEntity<?> verifyAccount(@RequestBody UserTokenRequest userTokenRequest) {
+        try {
+            JwtUtils jwtUtils = new JwtUtils(userTokenRequest.getToken());
+            if (jwtUtils.validateJwtToken()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+            String userID = jwtUtils.getSubjectToken();
+            iUserService.activeAccount(userID);
+            return ResponseEntity.ok().build();
+        }catch (TokenExpiredException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(e.getMessage()));
+        }
+    }
+
 }

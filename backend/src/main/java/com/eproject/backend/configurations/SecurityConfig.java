@@ -13,12 +13,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
 
 @Configuration
 @EnableWebSecurity
@@ -36,11 +36,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
-        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
+        customAuthenticationFilter.setFilterProcessesUrl("/auth/login");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/api/login", "/api/user/refresh-token").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAnyAuthority(ERole.ROLE_USER.toString());
+        http.authorizeRequests().antMatchers("/auth/login", "/auth/refresh-token").permitAll();
+        http.authorizeRequests().antMatchers("/users/reset-password").permitAll();
+        http.authorizeRequests().antMatchers(POST,"/users").permitAll();
+        http.authorizeRequests().antMatchers(PUT,"/users").hasAnyAuthority(ERole.ROLE_USER.toString());
+        http.authorizeRequests().antMatchers(GET,"/users/me").hasAnyAuthority(ERole.ROLE_USER.toString());
+        http.authorizeRequests().antMatchers("/users/verify-email").hasAnyAuthority(ERole.ROLE_USER.toString());
+
         http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority(ERole.ROLE_ADMIN.toString());
         http.authorizeRequests().antMatchers("/api/image/upload").permitAll();
         http.authorizeRequests().anyRequest().authenticated();

@@ -1,6 +1,10 @@
 package com.eproject.backend.services;
 
-import com.eproject.backend.dtos.UserPrinciple;
+import com.eproject.backend.common.exception.EmailExistException;
+import com.eproject.backend.common.exception.UserNameExistException;
+import com.eproject.backend.dtos.User.UserPrinciple;
+import com.eproject.backend.dtos.User.UserProfileUpdate;
+import com.eproject.backend.dtos.User.UserResponse;
 import com.eproject.backend.entities.Role;
 import com.eproject.backend.entities.User;
 import com.eproject.backend.entities.UserRole;
@@ -8,6 +12,9 @@ import com.eproject.backend.entities.UserRoleId;
 import com.eproject.backend.repositories.RoleRepo;
 import com.eproject.backend.repositories.UserRepo;
 import com.eproject.backend.repositories.UserRoleRepo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,10 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -36,9 +40,7 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
     @Override
     public UserPrinciple loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepo.findByUsername(username);
-        log.info("Username: {}", username);
         if (user == null) {
-            log.error("User not found in the database");
             throw new UsernameNotFoundException("User not found in the database");
         } else {
             log.info("User found in the database: {}", username);
@@ -56,21 +58,24 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
     }
 
     @Override
-    public User saveUser(User user) {
-        log.info("Saving new user {} to the database", user.getUsername());
+    public User saveUser(User user) throws Exception {
+        if(userRepo.checkExistByEmail(user.getEmail())){
+            throw new UserNameExistException();
+        }
+        if(userRepo.checkExistByEmail(user.getUsername())){
+            throw new EmailExistException();
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(user);
     }
 
     @Override
     public Role saveRole(Role role) {
-        log.info("Saving new role {} to the database", role.getName());
         return roleRepo.save(role);
     }
 
     @Override
     public void addRoleToUser(String username, String roleName) {
-        log.info("Adding role {} to user {}", roleName, username);
         User user = userRepo.findByUsername(username);
         Role role = roleRepo.findByName(roleName);
         userRoleRepo.save(new UserRole(
@@ -83,14 +88,47 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
 
     @Override
     public User getUser(String username) {
-        log.info("Fetching user {}", username);
         return userRepo.findByUsername(username);
     }
 
     @Override
+    public UserResponse getUserByID(String userID) {
+        return userRepo.findMe(userID);
+    }
+
+    @Override
     public List<User> getUsers() {
-        log.info("Fetching all users");
         return userRepo.findAll();
+    }
+
+    @Override
+    public void updateProfileUser(UserProfileUpdate userProfileUpdate, String userID) throws Exception {
+        try{
+            ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
+            String json = objectWriter.writeValueAsString(userProfileUpdate);
+            userRepo.updateProfile(json, userID);
+        }catch (Exception e){
+            throw new Exception();
+        }
+    }
+
+    @Override
+    public Boolean checkEmailExist(String email) {
+        return userRepo.checkExistByEmail(email);
+    }
+
+    @Override
+    public void resetPassword(String userID, String newPassword) {
+        User user = userRepo.findById(userID).get();
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepo.save(user);
+    }
+
+    @Override
+    public void activeAccount(String userID) {
+        User user = userRepo.findById(userID).get();
+        user.setVerifyEmail(true);
+        userRepo.save(user);
     }
 
 }
