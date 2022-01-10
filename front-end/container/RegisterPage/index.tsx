@@ -1,23 +1,24 @@
 import React, { useCallback, useState } from "react"
 import FormUserLayout from "../../components/Layout/FormUserLayout"
 import { Formik, Field, Form } from "formik"
-import { LoginFormProps } from "../../models/FormValue"
+import { RegisterFormProps } from "../../models/FormValue"
 import Link from "components/Link"
 import pageUrls from "../../services/pageUrls"
 
-export interface LoginContainerProps {
+export interface RegisterContainerProps {
 
 }
 
-const initialValue: LoginFormProps = {
+const initialValue: RegisterFormProps = {
   username: "",
   password: "",
+  email: "",
 }
 
-function LoginContainer(props: LoginContainerProps) {
+function RegisterContainer(props: RegisterContainerProps) {
   const [isShowPassword, setShowPassword] = useState<boolean>(false)
 
-  const handleSubmit = useCallback((values: LoginFormProps) => {
+  const handleSubmit = useCallback((values: RegisterFormProps) => {
     console.log(values)
   }, [])
 
@@ -30,7 +31,7 @@ function LoginContainer(props: LoginContainerProps) {
               <div className="col-8">
                 <div className="row">
                   <div className="col-12">
-                    <h1>Login</h1>
+                    <h1>Register</h1>
                     <p className="gray-600">Share your beautiful pictures with everyone</p>
                     <hr className="my-3" />
                   </div>
@@ -42,6 +43,16 @@ function LoginContainer(props: LoginContainerProps) {
                       placeholder="Username"
                       name="username"
                       id="username"
+                    />
+                  </div>
+                  <div className="col-12 mb-3">
+                    <label htmlFor="email" className="form-label">E-mail</label>
+                    <Field
+                      type="email"
+                      className="form-control fw-light"
+                      placeholder="example@gmail.com"
+                      name="email"
+                      id="email"
                     />
                   </div>
                   <div className="col-12">
@@ -67,12 +78,12 @@ function LoginContainer(props: LoginContainerProps) {
                   </div>
                   <div className="col-12 mb-4">
                     <button className="btn btn-primary w-100" type="submit">
-                      Login
+                      Register
                     </button>
                   </div>
                   <div className="col-12">
                     {/* eslint-disable-next-line react/no-unescaped-entities */}
-                    <p className="small">Don't have an account? <Link href={pageUrls.registerPage} className="fw-bold">Register for free</Link></p>
+                    <p className="small">Do you already have an account? <Link href={pageUrls.loginPage} className="fw-bold">Login</Link></p>
                   </div>
                 </div>
               </div>
@@ -84,4 +95,4 @@ function LoginContainer(props: LoginContainerProps) {
   )
 }
 
-export default LoginContainer
+export default RegisterContainer
