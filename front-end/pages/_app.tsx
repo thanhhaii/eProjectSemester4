@@ -3,6 +3,8 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import type { AppProps } from "next/app"
 import { NextComponentType } from "next"
 import { ReactNode } from "react"
+import AppLayout from "../container/AppLayout"
+import { SSRProvider } from "react-bootstrap"
 
 type GetLayoutComponent = NextComponentType & {
   getLayout?: (page: ReactNode) => ReactNode
@@ -15,9 +17,9 @@ interface MyAppProps extends AppProps {
 
 function MyApp({ Component, pageProps }: MyAppProps) {
 
-  const getLayout = Component.getLayout || (page => <>{page}</>)
+  const getLayout = Component.getLayout || (page => <AppLayout>{page}</AppLayout>)
 
-  return <>{getLayout(<Component {...pageProps} />)}</>
+  return <SSRProvider>{getLayout(<Component {...pageProps} />)}</SSRProvider>
 }
 
 export default MyApp
