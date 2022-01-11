@@ -1,0 +1,66 @@
+.headerLayout {
+  width: 100vw;
+  height: 120px;
+  padding-top: 10px;
+  background-color: #fff;
+  margin: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  > div {
+    height: 50px;
+  }
+
+  .boxSearchResource {
+    #searchResource {
+      border-radius: 20px;
+      padding-left: 35px;
+      background-color: rgba(gray, 0.05);
+
+      &:active, &:focus {
+        border-color: rgba(gray, 0.5);
+        background-color: #fff;
+      }
+    }
+
+    .iconSearch {
+      top: 50%;
+      left: 3%;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+.bottomHeader {
+  .listCategory {
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 0;
+    li {
+      display: inline;
+      margin: 0 10px;
+      font-size: 1rem;
+      font-weight: 400;
+      color: rgba(gray, 0.9);
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+
+  .mainCategory {
+    position: relative;
+    &::after {
+      content: "";
+      position: absolute;
+      height: 90%;
+      transform: translateY(5%);
+      width: 2px;
+      background-color: rgba(gray, 0.9);
+      top: 0;
+      right: 0;
+    }
+  }
+}

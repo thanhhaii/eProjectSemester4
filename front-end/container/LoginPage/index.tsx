@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react"
-import FormUserLayout from "../../components/Layout/FormUserLayout"
+import FormUserLayout from "../../components/Layout/FormUser/FormUserLayout"
 import { Formik, Field, Form } from "formik"
 import { LoginFormProps } from "../../models/FormValue"
 import Link from "components/Link"
