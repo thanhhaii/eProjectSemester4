@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
-public interface IUploadFile {
+public interface UploadFile {
 
     UploadFileResponse uploadFile(MultipartFile file);
 

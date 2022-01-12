@@ -1,11 +1,7 @@
-package com.eproject.backend.dtos.User;
+package com.eproject.backend.dtos.users;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor

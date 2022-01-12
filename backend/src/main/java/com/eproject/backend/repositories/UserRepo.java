@@ -1,6 +1,6 @@
 package com.eproject.backend.repositories;
 
-import com.eproject.backend.dtos.User.UserResponse;
+import com.eproject.backend.dtos.users.UserResponse;
 import com.eproject.backend.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,7 +15,7 @@ public interface UserRepo extends JpaRepository<User, String> {
     @Query("from User where email = :email")
     User findByEmail(@Param("email") String email);
 
-    @Query("select new com.eproject.backend.dtos.User.UserResponse(id,username, email, profile, verifyEmail, createdAt, updatedAt, userRoles) from User where id = :userID")
+    @Query("select new com.eproject.backend.dtos.users.UserResponse(id,username, email, profile, verifyEmail, createdAt, updatedAt, userRoles) from User where id = :userID")
     UserResponse findMe(@Param("userID") String userID);
 
     @Modifying

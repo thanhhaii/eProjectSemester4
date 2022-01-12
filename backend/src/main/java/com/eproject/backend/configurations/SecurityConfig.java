@@ -16,9 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
@@ -39,16 +37,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         customAuthenticationFilter.setFilterProcessesUrl("/auth/login");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/auth/login", "/auth/refresh-token").permitAll();
-        http.authorizeRequests().antMatchers("/users/reset-password").permitAll();
-        http.authorizeRequests().antMatchers(POST,"/users").permitAll();
-        http.authorizeRequests().antMatchers(PUT,"/users").hasAnyAuthority(ERole.ROLE_USER.toString());
-        http.authorizeRequests().antMatchers(GET,"/users/me").hasAnyAuthority(ERole.ROLE_USER.toString());
-        http.authorizeRequests().antMatchers("/users/verify-email").hasAnyAuthority(ERole.ROLE_USER.toString());
+        http.authorizeRequests().antMatchers(POST,"/users").permitAll()
+                .antMatchers("/users/reset-password").permitAll()
+                .antMatchers("/auth/login", "/auth/refresh-token").permitAll()
+                .antMatchers(PUT,"/users").hasAnyAuthority(ERole.ROLE_USER.toString())
+                .antMatchers(GET,"/users/me").hasAnyAuthority(ERole.ROLE_USER.toString())
+                .antMatchers("/users/verify-email").hasAnyAuthority(ERole.ROLE_USER.toString());
+
+        http.authorizeRequests().antMatchers(GET,"/categories").permitAll()
+                .antMatchers(POST,"/categories").hasAnyAuthority(ERole.ROLE_ADMIN.toString())
+                .antMatchers(PUT,"/categories").hasAnyAuthority(ERole.ROLE_ADMIN.toString())
+                .antMatchers(DELETE,"/categories/{id}").hasAnyAuthority(ERole.ROLE_ADMIN.toString());
 
         http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority(ERole.ROLE_ADMIN.toString());
         http.authorizeRequests().antMatchers("/api/image/upload").permitAll();
         http.authorizeRequests().anyRequest().authenticated();
+
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }

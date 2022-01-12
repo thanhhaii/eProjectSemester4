@@ -2,9 +2,9 @@ package com.eproject.backend.services;
 
 import com.eproject.backend.common.exception.EmailExistException;
 import com.eproject.backend.common.exception.UserNameExistException;
-import com.eproject.backend.dtos.User.UserPrinciple;
-import com.eproject.backend.dtos.User.UserProfileUpdate;
-import com.eproject.backend.dtos.User.UserResponse;
+import com.eproject.backend.dtos.users.UserPrinciple;
+import com.eproject.backend.dtos.users.UserProfileUpdate;
+import com.eproject.backend.dtos.users.UserResponse;
 import com.eproject.backend.entities.Role;
 import com.eproject.backend.entities.User;
 import com.eproject.backend.entities.UserRole;
@@ -14,7 +14,6 @@ import com.eproject.backend.repositories.UserRepo;
 import com.eproject.backend.repositories.UserRoleRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,7 +29,7 @@ import java.util.*;
 @Transactional
 @Slf4j
 @RequiredArgsConstructor
-public class UserServiceImpl implements IUserService, UserDetailsService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
