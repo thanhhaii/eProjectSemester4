@@ -1,6 +1,6 @@
 package com.eproject.backend.services;
 
-public interface ITokenService {
+public interface TokenService {
 
     String generateTokenIncludeUserID(String email, int tokenType);
 

@@ -3,7 +3,7 @@ package com.eproject.backend;
 import com.eproject.backend.common.ERole;
 import com.eproject.backend.entities.Role;
 import com.eproject.backend.entities.User;
-import com.eproject.backend.services.IUserService;
+import com.eproject.backend.services.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,7 +26,7 @@ public class BackendApplication {
     }
 
     @Bean
-    CommandLineRunner run(IUserService iUserService) {
+    CommandLineRunner run(UserService iUserService) {
         return args -> {
             iUserService.saveRole(new Role(new Date(), ERole.ROLE_USER.toString(), new Date()));
             iUserService.saveRole(new Role(new Date(), ERole.ROLE_MOD.toString(), new Date()));

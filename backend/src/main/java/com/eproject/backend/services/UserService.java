@@ -1,13 +1,13 @@
 package com.eproject.backend.services;
 
-import com.eproject.backend.dtos.User.UserResponse;
-import com.eproject.backend.dtos.User.UserProfileUpdate;
+import com.eproject.backend.dtos.users.UserResponse;
+import com.eproject.backend.dtos.users.UserProfileUpdate;
 import com.eproject.backend.entities.Role;
 import com.eproject.backend.entities.User;
 
 import java.util.List;
 
-public interface IUserService {
+public interface UserService {
 
     User saveUser(User user) throws Exception;
 

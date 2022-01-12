@@ -1,4 +1,4 @@
-package com.eproject.backend.dtos.User;
+package com.eproject.backend.dtos.users;
 
 import com.eproject.backend.entities.UserRole;
 import lombok.AllArgsConstructor;

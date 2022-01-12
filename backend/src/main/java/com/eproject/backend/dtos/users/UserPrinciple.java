@@ -1,4 +1,4 @@
-package com.eproject.backend.dtos.User;
+package com.eproject.backend.dtos.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class UserPrinciple implements UserDetails {
 

@@ -1,6 +1,10 @@
 package com.eproject.backend.entities;
 // Generated Jan 3, 2022, 8:04:04 PM by Hibernate Tools 5.1.10.Final
 
+import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -8,7 +12,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -20,91 +26,54 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "category", catalog = "photoshare")
+@Data
 public class Category implements java.io.Serializable {
 
-	private Integer id;
-	private String categoryName;
-	private Date createdAt;
-	private String description;
-	private Date updatedAd;
-	private Set<ImageCategory> imageCategories = new HashSet<ImageCategory>(0);
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
 
-	public Category() {
-	}
+    @Column(name = "id", unique = true, nullable = false)
+    private Integer id;
 
-	public Category(String categoryName, Date createdAt, String description, Date updatedAd) {
-		this.categoryName = categoryName;
-		this.createdAt = createdAt;
-		this.description = description;
-		this.updatedAd = updatedAd;
-	}
+    @Column(name = "category_name", nullable = false, length = 200)
+    private String categoryName;
 
-	public Category(String categoryName, Date createdAt, String description, Date updatedAd,
-			Set<ImageCategory> imageCategories) {
-		this.categoryName = categoryName;
-		this.createdAt = createdAt;
-		this.description = description;
-		this.updatedAd = updatedAd;
-		this.imageCategories = imageCategories;
-	}
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
+    private String description;
 
-	@Id
-	@GeneratedValue(strategy = IDENTITY)
+    @Temporal(TemporalType.DATE)
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, length = 10)
+    private Date createdAt = new Date();
 
-	@Column(name = "id", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
+    @Temporal(TemporalType.DATE)
+    @LastModifiedDate
+    @Column(name = "updated_at", nullable = false, length = 10)
+    private Date updatedAt = new Date();
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+    private Set<ImageCategory> imageCategories = new HashSet<ImageCategory>(0);
 
-	@Column(name = "category_name", nullable = false, length = 200)
-	public String getCategoryName() {
-		return this.categoryName;
-	}
+    public Category() {
+    }
 
-	public void setCategoryName(String categoryName) {
-		this.categoryName = categoryName;
-	}
+    public Category(String categoryName, String description) {
+        this.categoryName = categoryName;
+        this.description = description;
+    }
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "created_at", nullable = false, length = 10)
-	public Date getCreatedAt() {
-		return this.createdAt;
-	}
+    public Category(String categoryName, Date createdAt, String description, Date updatedAd,
+                    Set<ImageCategory> imageCategories) {
+        this.categoryName = categoryName;
+        this.createdAt = createdAt;
+        this.description = description;
+        this.updatedAt = updatedAd;
+        this.imageCategories = imageCategories;
+    }
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	@Column(name = "description", nullable = false, columnDefinition = "TEXT")
-	public String getDescription() {
-		return this.description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	@Temporal(TemporalType.DATE)
-	@Column(name = "updated_ad", nullable = false, length = 10)
-	public Date getUpdatedAd() {
-		return this.updatedAd;
-	}
-
-	public void setUpdatedAd(Date updatedAd) {
-		this.updatedAd = updatedAd;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
-	public Set<ImageCategory> getImageCategories() {
-		return this.imageCategories;
-	}
-
-	public void setImageCategories(Set<ImageCategory> imageCategories) {
-		this.imageCategories = imageCategories;
-	}
-
+    public Category(Integer id, String categoryName, String description) {
+        this.id = id;
+        this.categoryName = categoryName;
+        this.description = description;
+    }
 }

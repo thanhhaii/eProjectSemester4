@@ -2,7 +2,6 @@ package com.eproject.backend.services;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.eproject.backend.common.TokenType;
 import com.eproject.backend.configurations.ConfigProperties;
 import com.eproject.backend.entities.Token;
 import com.eproject.backend.entities.User;
@@ -15,7 +14,7 @@ import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
-public class TokenServiceImpl implements ITokenService {
+public class TokenServiceImpl implements TokenService {
 
     private final ConfigProperties configProp;
 

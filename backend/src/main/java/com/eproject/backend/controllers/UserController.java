@@ -5,12 +5,12 @@ import com.eproject.backend.common.TokenType;
 import com.eproject.backend.common.exception.EmailExistException;
 import com.eproject.backend.common.exception.UserNameExistException;
 import com.eproject.backend.dtos.*;
-import com.eproject.backend.dtos.User.*;
+import com.eproject.backend.dtos.users.*;
 import com.eproject.backend.entities.User;
 import com.eproject.backend.helpers.mail.SendMailHelper;
 import com.eproject.backend.helpers.token.JwtUtils;
-import com.eproject.backend.services.ITokenService;
-import com.eproject.backend.services.IUserService;
+import com.eproject.backend.services.TokenService;
+import com.eproject.backend.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +29,9 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final IUserService iUserService;
+    private final UserService iUserService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final ITokenService iTokenService;
+    private final TokenService iTokenService;
     private final JavaMailSender javaMailSender;
 
     @GetMapping("/users")
