@@ -1,11 +1,12 @@
-import React, { useCallback, useState } from "react"
-import FormUserLayout from "../../components/Layout/FormUser/FormUserLayout"
+import React, { useCallback, useMemo, useState } from "react"
+import FormUserLayout from "components/Layout/FormUser/FormUserLayout"
 import { Formik, Field, Form } from "formik"
-import { ForgotPasswordFormProps } from "../../models/FormValue"
+import { ForgotPasswordFormProps } from "models/FormValue"
 import Link from "components/Link"
-import pageUrls from "../../services/pageUrls"
+import pageUrls from "services/pageUrls"
 import * as yup from "yup"
-import serverApi from "../../services/server"
+import serverApi from "services/server"
+import ButtonLoading from "components/ButtonLoading"
 
 export interface ForgotPasswordContainerProps {
 
@@ -16,7 +17,7 @@ const validation = (): yup.ObjectSchema<any> =>
     email: yup
       .string()
       .email("Email invalidate")
-      .required("Email cannot be blank")
+      .required("Email cannot be blank"),
   })
 
 const initialValue: ForgotPasswordFormProps = {
@@ -25,14 +26,20 @@ const initialValue: ForgotPasswordFormProps = {
 
 function ForgotPasswordContainer(props: ForgotPasswordContainerProps) {
   const [isLoading, setLoading] = useState<boolean>(false)
+  const validationSchema = useMemo(() => validation(), [])
 
-  const handleSubmit = useCallback(async(values: ForgotPasswordFormProps) => {
-    await serverApi.forgotPassword(values.email)
+  const handleSubmit = useCallback(async (values: ForgotPasswordFormProps) => {
+    try {
+      setLoading(true)
+      await serverApi.forgotPassword(values.email)
+      setLoading(false)
+    } catch (e) {
+    }
   }, [])
 
   return (
     <FormUserLayout>
-      <Formik initialValues={initialValue} onSubmit={handleSubmit}>
+      <Formik initialValues={initialValue} onSubmit={handleSubmit} validationSchema={validationSchema}>
         {formik => {
           return (
             <Form className="row justify-content-center h-100 align-items-center">
@@ -54,9 +61,9 @@ function ForgotPasswordContainer(props: ForgotPasswordContainerProps) {
                     />
                   </div>
                   <div className="col-12 mb-3">
-                    <button className="btn btn-primary w-100" type="submit">
+                    <ButtonLoading isLoading={isLoading} className="btn btn-primary w-100" type="submit">
                       Continue
-                    </button>
+                    </ButtonLoading>
                   </div>
                   <div className="col-12 text-center">
                     <Link href={pageUrls.registerPage} className="fw-bold small">Back to login</Link>
