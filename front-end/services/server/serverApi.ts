@@ -1,7 +1,7 @@
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios"
 import { isServer } from "services/ssrutils"
 import nprogress from "nprogress"
-import { LoginRequest, RegisterRequest } from "./requestModels"
+import { LoginRequest, RegisterRequest, ResetPasswordRequest } from "./requestModels"
 import { parseTokeInfo, TokenInfo, User } from "../../models/User"
 import tokenManager from "services/token-manager"
 
@@ -94,4 +94,9 @@ export class ServerApi {
     })
   }
 
+  public async resetPassword(resetPasswordRequest: ResetPasswordRequest): Promise<AxiosResponse>{
+    return await this._axios.put("/users/reset-password", resetPasswordRequest, {
+      validateStatus: (status: number) => status === 200,
+    })
+  }
 }
