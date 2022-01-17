@@ -5,6 +5,7 @@ import com.eproject.backend.filters.CustomAuthenticationFilter;
 import com.eproject.backend.filters.CustomAuthorizationFilter;
 import com.eproject.backend.services.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +22,7 @@ import static org.springframework.http.HttpMethod.*;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserServiceImpl UserServiceImpl;
@@ -36,14 +38,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
         customAuthenticationFilter.setFilterProcessesUrl("/auth/login");
         http.csrf().disable();
+        http.cors();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers(POST,"/users").permitAll()
-                .antMatchers("/users/reset-password").permitAll()
-                .antMatchers("/auth/login", "/auth/refresh-token").permitAll()
+        http.authorizeRequests().antMatchers(POST,"/users/register").permitAll()
+                .antMatchers("/users/reset-password","/auth/refresh-token").permitAll()
                 .antMatchers(PUT,"/users").hasAnyAuthority(ERole.ROLE_USER.toString())
                 .antMatchers(GET,"/users/me").hasAnyAuthority(ERole.ROLE_USER.toString())
                 .antMatchers("/users/verify-email").hasAnyAuthority(ERole.ROLE_USER.toString());
-
         http.authorizeRequests().antMatchers(GET,"/categories").permitAll()
                 .antMatchers(POST,"/categories").hasAnyAuthority(ERole.ROLE_ADMIN.toString())
                 .antMatchers(PUT,"/categories").hasAnyAuthority(ERole.ROLE_ADMIN.toString())
@@ -63,3 +64,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 }
+

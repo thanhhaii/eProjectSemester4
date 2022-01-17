@@ -58,10 +58,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User saveUser(User user) throws Exception {
-        if(userRepo.checkExistByEmail(user.getEmail())){
+        if(userRepo.checkExistByUsername(user.getUsername())){
             throw new UserNameExistException();
         }
-        if(userRepo.checkExistByEmail(user.getUsername())){
+        if(userRepo.checkExistByEmail(user.getEmail())){
             throw new EmailExistException();
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -92,7 +92,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserResponse getUserByID(String userID) {
-        return userRepo.findMe(userID);
+        User user = userRepo.findById(userID).get();
+        return new UserResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getProfile(),
+                user.isVerifyEmail(),
+                user.getCreatedAt(),
+                user.getUpdatedAt(),
+                user.getUserRoles()
+        );
     }
 
     @Override
