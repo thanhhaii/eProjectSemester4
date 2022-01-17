@@ -1,13 +1,34 @@
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import FormUserLayout from "../../components/Layout/FormUser/FormUserLayout"
-import { Formik, Field, Form } from "formik"
+import { Formik, Field, Form, ErrorMessage } from "formik"
 import { RegisterFormProps } from "../../models/FormValue"
 import Link from "components/Link"
 import pageUrls from "../../services/pageUrls"
+import * as yup from "yup"
+import serverApi from "../../services/server"
+import axios, { AxiosError } from "axios"
+import ButtonLoading from "../../components/ButtonLoading"
 
 export interface RegisterContainerProps {
 
 }
+
+const validation = (): yup.ObjectSchema<any> =>
+  yup.object().shape({
+    username: yup
+      .string()
+      .min(4, "Username is too short")
+      .matches(/^[a-zA-Z0-9@._-]+/g, "Contains invalid characters")
+      .required("Username cannot be blank"),
+    password: yup
+      .string()
+      .min(5, "Password is too short")
+      .required("Password cannot be blank"),
+    email: yup
+      .string()
+      .email("Email invalidate")
+      .required("Email cannot be blank")
+  })
 
 const initialValue: RegisterFormProps = {
   username: "",
@@ -17,14 +38,35 @@ const initialValue: RegisterFormProps = {
 
 function RegisterContainer(props: RegisterContainerProps) {
   const [isShowPassword, setShowPassword] = useState<boolean>(false)
+  const [isLoading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string>("")
 
-  const handleSubmit = useCallback((values: RegisterFormProps) => {
-    console.log(values)
+  const validationSchema = useMemo(() => validation(), [])
+  const handleSubmit = useCallback(async (values: RegisterFormProps) => {
+    try {
+      setLoading(true)
+      setError("")
+      await serverApi.register(values)
+      setLoading(false)
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        const error = e as AxiosError
+        if(error.response?.data.message){
+          setError(error.response?.data.message)
+        }else {
+          setError("Internal server error")
+        }
+      }
+    }
+    setLoading(false)
   }, [])
 
   return (
     <FormUserLayout>
-      <Formik initialValues={initialValue} onSubmit={handleSubmit}>
+      <Formik
+        initialValues={initialValue}
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}>
         {formik => {
           return (
             <Form className="row justify-content-center h-100 align-items-center">
@@ -36,6 +78,7 @@ function RegisterContainer(props: RegisterContainerProps) {
                     <hr className="my-3" />
                   </div>
                   <div className="col-12 mb-3">
+                    {error !== "" && <p className="text-danger mb-1">{error}</p>}
                     <label htmlFor="username" className="form-label">Username</label>
                     <Field
                       type="text"
@@ -44,6 +87,9 @@ function RegisterContainer(props: RegisterContainerProps) {
                       name="username"
                       id="username"
                     />
+                    <span className="small text-danger">
+                      <ErrorMessage name="username" />
+                    </span>
                   </div>
                   <div className="col-12 mb-3">
                     <label htmlFor="email" className="form-label">E-mail</label>
@@ -54,6 +100,9 @@ function RegisterContainer(props: RegisterContainerProps) {
                       name="email"
                       id="email"
                     />
+                    <span className="small text-danger">
+                      <ErrorMessage name="email" />
+                    </span>
                   </div>
                   <div className="col-12">
                     <label htmlFor="password" className="form-label">Password</label>
@@ -64,6 +113,9 @@ function RegisterContainer(props: RegisterContainerProps) {
                       id="password"
                       name="password"
                     />
+                    <span className="small text-danger">
+                      <ErrorMessage name="password" />
+                    </span>
                   </div>
                   <div className="col-12 my-3 d-flex justify-content-between">
                     <div>
@@ -77,12 +129,13 @@ function RegisterContainer(props: RegisterContainerProps) {
                     <Link href={pageUrls.forgotPasswordPage} className="mb-0">Forgot Password?</Link>
                   </div>
                   <div className="col-12 mb-3">
-                    <button className="btn btn-primary w-100" type="submit">
+                    <ButtonLoading isLoading={isLoading} className="btn btn-primary w-100" type="submit">
                       Register
-                    </button>
+                    </ButtonLoading>
                   </div>
                   <div className="col-12">
-                    <p className="small">Do you already have an account? <Link href={pageUrls.loginPage} className="fw-bold">Login</Link></p>
+                    <p className="small">Do you already have an account? <Link href={pageUrls.loginPage}
+                                                                               className="fw-bold">Login</Link></p>
                   </div>
                 </div>
               </div>

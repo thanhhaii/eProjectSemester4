@@ -1,21 +1,33 @@
-import React, { useCallback } from "react"
+import React, { useCallback, useState } from "react"
 import FormUserLayout from "../../components/Layout/FormUser/FormUserLayout"
 import { Formik, Field, Form } from "formik"
 import { ForgotPasswordFormProps } from "../../models/FormValue"
 import Link from "components/Link"
 import pageUrls from "../../services/pageUrls"
+import * as yup from "yup"
+import serverApi from "../../services/server"
 
 export interface ForgotPasswordContainerProps {
 
 }
+
+const validation = (): yup.ObjectSchema<any> =>
+  yup.object().shape({
+    email: yup
+      .string()
+      .email("Email invalidate")
+      .required("Email cannot be blank")
+  })
 
 const initialValue: ForgotPasswordFormProps = {
   email: "",
 }
 
 function ForgotPasswordContainer(props: ForgotPasswordContainerProps) {
-  const handleSubmit = useCallback((values: ForgotPasswordFormProps) => {
-    console.log(values )
+  const [isLoading, setLoading] = useState<boolean>(false)
+
+  const handleSubmit = useCallback(async(values: ForgotPasswordFormProps) => {
+    await serverApi.forgotPassword(values.email)
   }, [])
 
   return (
@@ -28,7 +40,6 @@ function ForgotPasswordContainer(props: ForgotPasswordContainerProps) {
                 <div className="row">
                   <div className="col-12">
                     <h1>Forgot Password</h1>
-                    {/* eslint-disable-next-line react/no-unescaped-entities */}
                     <p className="gray-600">No worries, we'll send you reset instructions</p>
                     <hr className="my-3" />
                   </div>
