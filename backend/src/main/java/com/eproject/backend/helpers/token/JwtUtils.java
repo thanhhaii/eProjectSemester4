@@ -23,12 +23,14 @@ public class JwtUtils {
         this.token = token;
     }
 
-    public boolean validateJwtToken() {
+    public boolean validateJwtToken() throws Exception {
         try {
             Algorithm algorithm = Algorithm.HMAC256(configProp.getConfigValue("jwt.secretKey").getBytes());
             JWTVerifier verifier = JWT.require(algorithm).build();
             verifier.verify(token);
             return true;
+        } catch (TokenExpiredException e) {
+            throw new TokenExpiredException("The token period has expired");
         } catch (Exception e) {
             return false;
         }
@@ -38,9 +40,10 @@ public class JwtUtils {
         Algorithm algorithm = Algorithm.HMAC256(configProp.getConfigValue("jwt.secretKey").getBytes());
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT decodedJWT = verifier.verify(token);
-        if(decodedJWT.getExpiresAt().before(new Date())){
+        if (decodedJWT.getExpiresAt().before(new Date())) {
             throw new TokenExpiredException("Token is expired");
         }
         return decodedJWT.getSubject();
     }
+
 }

@@ -13,7 +13,7 @@ function FormUserLayout(props: FormUserLayoutProps) {
 
   return (
     <div className={classNames("container", styles.container)}>
-      <div className="row h-100 align-items-center justify-content-center">
+      <div className="row h-100 w-100 align-items-center justify-content-center">
         <div className={classNames("col-12 shadow-lg ps-0 bg-white", styles.formLayout)}>
           <div className="row">
             <div className={classNames("col-7", styles.box)}>
@@ -27,7 +27,7 @@ function FormUserLayout(props: FormUserLayoutProps) {
               </div>
             </div>
             <div className="col-5 p-2">
-              {children}yd
+              {children}
             </div>
           </div>
         </div>

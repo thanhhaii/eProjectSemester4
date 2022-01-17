@@ -1,20 +1,24 @@
 package com.eproject.backend.controllers;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.eproject.backend.common.ERole;
 import com.eproject.backend.common.TokenType;
 import com.eproject.backend.common.exception.EmailExistException;
 import com.eproject.backend.common.exception.UserNameExistException;
 import com.eproject.backend.dtos.*;
 import com.eproject.backend.dtos.users.*;
+import com.eproject.backend.entities.Role;
 import com.eproject.backend.entities.User;
 import com.eproject.backend.helpers.mail.SendMailHelper;
 import com.eproject.backend.helpers.token.JwtUtils;
 import com.eproject.backend.services.TokenService;
 import com.eproject.backend.services.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +31,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService iUserService;
@@ -39,12 +44,13 @@ public class UserController {
         return ResponseEntity.ok().body(iUserService.getUsers());
     }
 
-    @PostMapping("/")
+    @PostMapping("/register")
     public ResponseEntity<?> register(@Validated @RequestBody SignUp signUp) {
         try {
             String passwordEncoder = bCryptPasswordEncoder.encode(signUp.getPassword());
             User user = new User(signUp.getUsername(), signUp.getEmail(), passwordEncoder);
             User userCreate = iUserService.saveUser(user);
+            iUserService.addRoleToUser(user.getUsername(), ERole.ROLE_USER.toString());
             URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/sign-up").toUriString());
             return ResponseEntity.created(uri).body(userCreate.getId());
         } catch (UserNameExistException e) {
@@ -58,12 +64,12 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe() {
-        UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext();
-        UserResponse userResponse = iUserService.getUserByID(userPrinciple.getId());
+        UsernamePasswordAuthenticationToken userContext = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        UserResponse userResponse = iUserService.getUserByID(userContext.getPrincipal().toString());
         return ResponseEntity.ok(userResponse);
     }
 
-    @PutMapping("/")
+    @PutMapping("/update-profile")
     public ResponseEntity<?> updateProfile(@RequestBody UserProfileUpdate userProfileUpdate) {
         try {
             UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext();
@@ -83,12 +89,14 @@ public class UserController {
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPasswordByEmail(@RequestBody UserEmailRequest userEmailRequest) {
         try {
-            if (iUserService.checkEmailExist(userEmailRequest.getEmail())) {
+            if (!iUserService.checkEmailExist(userEmailRequest.getEmail())) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Email is not used"));
             }
             String token = iTokenService.generateTokenIncludeUserID(userEmailRequest.getEmail(), TokenType.TYPE_RESET_PASSWORD);
             SendMailHelper sendMailHelper = new SendMailHelper();
-            sendMailHelper.sendHTMLMail(token, userEmailRequest.getEmail(), javaMailSender);
+            String content = "<a " + "href='http://localhost:3000/reset-password?t=" + token + "'" + ">";
+            content += "Link reset password</a>";
+            sendMailHelper.sendHTMLMail(content, userEmailRequest.getEmail(), javaMailSender);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(e.getMessage()));
@@ -96,7 +104,7 @@ public class UserController {
     }
 
     @PutMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody UserResetPassword userResetPassword) {
+    public ResponseEntity<?> resetPassword(@RequestBody UserResetPassword userResetPassword) throws Exception {
         try {
             JwtUtils jwtUtils = new JwtUtils(userResetPassword.getToken());
             if (jwtUtils.validateJwtToken()) {
@@ -107,8 +115,9 @@ public class UserController {
             return ResponseEntity.ok().build();
         } catch (TokenExpiredException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse(e.getMessage()));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(e.getMessage()));
         }
-
     }
 
     @PostMapping("/verify-email")
@@ -136,7 +145,7 @@ public class UserController {
             String userID = jwtUtils.getSubjectToken();
             iUserService.activeAccount(userID);
             return ResponseEntity.ok().build();
-        }catch (TokenExpiredException e){
+        } catch (TokenExpiredException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(e.getMessage()));

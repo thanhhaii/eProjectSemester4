@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.util.*;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class UserResponse {
 
@@ -28,7 +27,8 @@ public class UserResponse {
 
     private List<String> roles = new ArrayList<>();
 
-    public UserResponse(String id, String username, String email, String profile, boolean verifyEmail, Date createdAt, Date updatedAt, Set<UserRole> userRoles) {
+    public UserResponse(String id, String username, String email, String profile,
+                        boolean verifyEmail, Date createdAt, Date updatedAt,Set<UserRole> userRoles) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -40,4 +40,5 @@ public class UserResponse {
             this.roles.add(role.getRole().getName());
         });
     }
+
 }

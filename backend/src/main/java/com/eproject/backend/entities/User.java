@@ -40,7 +40,7 @@ public class User implements java.io.Serializable {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "profile", nullable = false)
+    @Column(name = "profile")
     private String profile;
 
     @Column(name = "verify_email", nullable = false)

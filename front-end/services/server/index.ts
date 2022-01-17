@@ -6,6 +6,8 @@ import { ServerApi } from "./serverApi"
 const serverApi = new ServerApi(
   axios.create({
     timeout: isServer() ? 15000 : 300000,
-    baseURL: config.serverApi.url,
+    baseURL: "http://localhost:8011",
   }),
 )
+
+export default serverApi

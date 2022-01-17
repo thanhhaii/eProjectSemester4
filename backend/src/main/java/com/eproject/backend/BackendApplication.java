@@ -1,17 +1,12 @@
 package com.eproject.backend;
 
-import com.eproject.backend.common.ERole;
-import com.eproject.backend.entities.Role;
-import com.eproject.backend.entities.User;
-import com.eproject.backend.services.UserService;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Date;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 public class BackendApplication {
@@ -26,15 +21,28 @@ public class BackendApplication {
     }
 
     @Bean
-    CommandLineRunner run(UserService iUserService) {
-        return args -> {
-            iUserService.saveRole(new Role(new Date(), ERole.ROLE_USER.toString(), new Date()));
-            iUserService.saveRole(new Role(new Date(), ERole.ROLE_MOD.toString(), new Date()));
-            iUserService.saveRole(new Role(new Date(), ERole.ROLE_ADMIN.toString(), new Date()));
-
-            iUserService.saveUser(new User("admin", "hailamnguyenthanh@gmail.com", "admin", "", false));
-            iUserService.addRoleToUser("admin", ERole.ROLE_ADMIN.toString());
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedMethods("*")
+                        .allowedOrigins("http://localhost:3000")
+                        .allowCredentials(true);
+            }
         };
     }
+
+//    @Bean
+//    CommandLineRunner run(UserService iUserService) {
+//        return args -> {
+//            iUserService.saveRole(new Role(new Date(), ERole.ROLE_USER.toString(), new Date()));
+//            iUserService.saveRole(new Role(new Date(), ERole.ROLE_MOD.toString(), new Date()));
+//            iUserService.saveRole(new Role(new Date(), ERole.ROLE_ADMIN.toString(), new Date()));
+//
+//            iUserService.saveUser(new User("admin", "hailamnguyenthanh@gmail.com", "admin", "", false));
+//            iUserService.addRoleToUser("admin", ERole.ROLE_ADMIN.toString());
+//        };
+//    }
 
 }

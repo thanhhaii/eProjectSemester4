@@ -1,4 +1,5 @@
 const pageUrls = {
+  home: "/",
   loginPage: "/login",
   registerPage: "/register",
   forgotPasswordPage: "/forgot-password",

@@ -5,6 +5,7 @@
       <option name="customHeaders">
         <set>
           <option value="access_token" />
+          <option value="Access-Control-Expose-Headers" />
         </set>
       </option>
     </inspection_tool>
