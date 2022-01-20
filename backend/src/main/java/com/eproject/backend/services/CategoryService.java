@@ -1,6 +1,7 @@
 package com.eproject.backend.services;
 
 import com.eproject.backend.entities.Category;
+import com.eproject.backend.entities.ImageCategory;
 
 import java.util.List;
 

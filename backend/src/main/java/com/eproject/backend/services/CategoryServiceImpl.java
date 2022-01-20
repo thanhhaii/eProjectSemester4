@@ -1,17 +1,21 @@
 package com.eproject.backend.services;
 
 import com.eproject.backend.entities.Category;
+import com.eproject.backend.entities.ImageCategory;
 import com.eproject.backend.repositories.CategoryRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.eproject.backend.repositories.ImageCategoryRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService{
 
-    @Autowired
-    private CategoryRepo categoryRepo;
+    private final CategoryRepo categoryRepo;
+
+    private final ImageCategoryRepo imageCategoryRepo;
 
     @Override
     public List<Category> findAllCategory() {
@@ -32,4 +36,5 @@ public class CategoryServiceImpl implements CategoryService{
     public void deleteCategory(int categoryID) {
         categoryRepo.deleteById(categoryID);
     }
+
 }

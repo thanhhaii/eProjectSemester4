@@ -25,6 +25,10 @@ public class ImageCategory implements java.io.Serializable {
 	public ImageCategory() {
 	}
 
+	public ImageCategory(ImageCategoryId id){
+		this.id = id;
+	}
+
 	public ImageCategory(ImageCategoryId id, Category category, Image image) {
 		this.id = id;
 		this.category = category;

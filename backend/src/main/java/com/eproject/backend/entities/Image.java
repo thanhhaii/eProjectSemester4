@@ -1,7 +1,10 @@
 package com.eproject.backend.entities;
 // Generated Jan 3, 2022, 8:04:04 PM by Hibernate Tools 5.1.10.Final
 
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -13,122 +16,62 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "image", catalog = "photoshare")
+@Data
 public class Image implements java.io.Serializable {
 
-	private String id;
-	private Date createdAt;
-	private String imageInfo;
-	private String imageUrl;
-	private boolean isPremium;
-	private Date updatedAt;
-	private String userId;
-	private Set<ImageCategory> imageCategories = new HashSet<ImageCategory>(0);
+    @Id
 
-	public Image() {
-	}
+    @Column(name = "id", unique = true, nullable = false)
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    private String id;
 
-	public Image(String id, Date createdAt, String imageInfo, String imageUrl, boolean isPremium, Date updatedAt,
-			String userId) {
-		this.id = id;
-		this.createdAt = createdAt;
-		this.imageInfo = imageInfo;
-		this.imageUrl = imageUrl;
-		this.isPremium = isPremium;
-		this.updatedAt = updatedAt;
-		this.userId = userId;
-	}
+    @Temporal(TemporalType.DATE)
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, length = 10)
+    private Date createdAt = new Date();
 
-	public Image(String id, Date createdAt, String imageInfo, String imageUrl, boolean isPremium, Date updatedAt,
-			String userId, Set<ImageCategory> imageCategories) {
-		this.id = id;
-		this.createdAt = createdAt;
-		this.imageInfo = imageInfo;
-		this.imageUrl = imageUrl;
-		this.isPremium = isPremium;
-		this.updatedAt = updatedAt;
-		this.userId = userId;
-		this.imageCategories = imageCategories;
-	}
+    @Column(name = "image_info")
+    private String imageInfo;
 
-	@Id
+    @Column(name = "image_url", nullable = false, length = 200)
+    private String imageUrl;
 
-	@Column(name = "id", unique = true, nullable = false)
-	@GeneratedValue(generator = "UUID")
-	@GenericGenerator(
-			name = "UUID",
-			strategy = "org.hibernate.id.UUIDGenerator"
-	)
-	public String getId() {
-		return this.id;
-	}
+    @Column(name = "is_premium", nullable = false)
+    private boolean isPremium = false;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    @Temporal(TemporalType.DATE)
+    @LastModifiedDate
+    @Column(name = "updated_at", nullable = false, length = 10)
+    private Date updatedAt = new Date();
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "created_at", nullable = false, length = 10)
-	public Date getCreatedAt() {
-		return this.createdAt;
-	}
+    @Column(name = "user_id", nullable = false)
+    private String userId;
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "image")
+    private Set<ImageCategory> imageCategories = new HashSet<ImageCategory>(0);
 
-	@Column(name = "image_info", nullable = false)
-	public String getImageInfo() {
-		return this.imageInfo;
-	}
+    public Image() {
+    }
 
-	public void setImageInfo(String imageInfo) {
-		this.imageInfo = imageInfo;
-	}
+    public Image(String imageUrl, String userId) {
+        this.imageUrl = imageUrl;
+        this.userId = userId;
+    }
 
-	@Column(name = "image_url", nullable = false, length = 200)
-	public String getImageUrl() {
-		return this.imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
-
-	@Column(name = "is_premium", nullable = false)
-	public boolean isIsPremium() {
-		return this.isPremium;
-	}
-
-	public void setIsPremium(boolean isPremium) {
-		this.isPremium = isPremium;
-	}
-
-	@Temporal(TemporalType.DATE)
-	@Column(name = "updated_at", nullable = false, length = 10)
-	public Date getUpdatedAt() {
-		return this.updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	@Column(name = "user_id", nullable = false)
-	public String getUserId() {
-		return this.userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "image")
-	public Set<ImageCategory> getImageCategories() {
-		return this.imageCategories;
-	}
-
-	public void setImageCategories(Set<ImageCategory> imageCategories) {
-		this.imageCategories = imageCategories;
-	}
+    public Image(String id, Date createdAt, String imageInfo, String imageUrl, boolean isPremium, Date updatedAt,
+                 String userId, Set<ImageCategory> imageCategories) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.imageInfo = imageInfo;
+        this.imageUrl = imageUrl;
+        this.isPremium = isPremium;
+        this.updatedAt = updatedAt;
+        this.userId = userId;
+        this.imageCategories = imageCategories;
+    }
 
 }
