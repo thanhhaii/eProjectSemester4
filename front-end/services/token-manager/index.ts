@@ -1,5 +1,5 @@
 import serverApi from "services/server"
-import { TokenInfo, parseTokeInfo, isRefreshTokenExpire } from "models/User"
+import { TokenInfo, parseTokeInfo, isRefreshTokenExpire } from "models/Userm"
 
 interface Storage {
   setToken(tokenInfo: TokenInfo | null): Promise<void>

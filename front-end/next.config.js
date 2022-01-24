@@ -8,6 +8,17 @@ const getEnvCode = () => {
   return "development"
 }
 
+const getImageDomains = () => {
+  let domains = []
+  if (process.env.STATIC_IMAGES_DOMAIN) {
+    domains = process.env.STATIC_IMAGES_DOMAIN.split(";")
+      .map(t => t.trim())
+      .filter(t => !!t)
+  }
+
+  return domains.concat(["localhost", "images.unsplash.com"])
+}
+
 module.exports = {
   reactStrictMode: true,
   publicRuntimeConfig: {
@@ -15,5 +26,8 @@ module.exports = {
     serverApi: {
       url: process.env.SERVER_API,
     },
+  },
+  images: {
+    domains: getImageDomains(),
   },
 }

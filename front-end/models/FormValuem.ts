@@ -1,3 +1,5 @@
+import { ImageUpload } from "./Imagem"
+
 export interface LoginFormProps {
   username: string
   password: string
@@ -16,4 +18,8 @@ export interface ForgotPasswordFormProps {
 export interface ResetPasswordFormProps {
   newPassword: string
   confirmPassword: string
+}
+
+export interface UploadImageFormProps {
+  images: ImageUpload[]
 }

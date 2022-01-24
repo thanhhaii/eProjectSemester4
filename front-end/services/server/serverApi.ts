@@ -2,7 +2,7 @@ import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios"
 import { isServer } from "services/ssrutils"
 import nprogress from "nprogress"
 import { LoginRequest, RegisterRequest, ResetPasswordRequest } from "./requestModels"
-import { parseTokeInfo, TokenInfo, User } from "../../models/User"
+import { parseTokeInfo, TokenInfo, User } from "models/Userm"
 import tokenManager from "services/token-manager"
 
 export class ServerApi {
@@ -61,7 +61,7 @@ export class ServerApi {
       validateStatus: (status: number) => status === 200 || status === 401,
       transformResponse: (data: string) => parseTokeInfo(data),
     })
-    console.log(resp.data)
+
     if (resp.status === 401 || !resp.data) {
       return null
     }

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react"
 import FormUserLayout from "../../components/Layout/FormUser/FormUserLayout"
 import { Formik, Field, Form, ErrorMessage } from "formik"
-import { RegisterFormProps } from "../../models/FormValue"
+import { RegisterFormProps } from "../../models/FormValuem"
 import Link from "components/Link"
 import pageUrls from "../../services/pageUrls"
 import * as yup from "yup"

@@ -1,3 +1,5 @@
+@import "styles/variable";
+
 .headerLayout {
   width: 100vw;
   height: 120px;
@@ -18,7 +20,8 @@
       padding-left: 35px;
       background-color: rgba(gray, 0.05);
 
-      &:active, &:focus {
+      &:active,
+      &:focus {
         border-color: rgba(gray, 0.5);
         background-color: #fff;
       }
@@ -62,5 +65,58 @@
       top: 0;
       right: 0;
     }
+  }
+}
+
+.signIn {
+  position: relative;
+  &::after {
+    position: absolute;
+    content: "";
+    background-color: rgba($color: gray, $alpha: 0.5);
+    height: 100%;
+    width: 2px;
+    right: -10px;
+  }
+}
+
+.modalUpload {
+  height: 80vh;
+  cursor: pointer;
+
+  .dropzone {
+    height: 85%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed black;
+    border-radius: 5px;
+    flex-direction: column;
+  }
+
+  .boxImageRender {
+    height: 85%;
+  }
+
+  .customImage {
+    object-fit: contain;
+    width: 100% !important;
+    position: relative !important;
+    height: unset !important;
+  }
+
+  .unsetImage {
+    width: 100%;
+  }
+  .unsetImage > span {
+    position: unset !important;
+  }
+
+  .boxUploadImageItem {
+    width: 100%;
+    height: 200px;
+    border: 2px dashed $altblue;
+    border-radius: 5px;
   }
 }

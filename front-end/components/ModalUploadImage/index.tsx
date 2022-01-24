@@ -5,14 +5,13 @@ export interface ModalUploadImageProps {
   onHide: () => void
 }
 
-function ModalUploadImage(props: ModalUploadImageProps) {
+const ModalUploadImage = (props: ModalUploadImageProps) => {
   const { show, onHide } = props
 
-  return <Modal show={show} onHide={onHide} centered size="xl" className="">
+  return <Modal show={show} onHide={onHide} centered>
     <Modal.Body>
-
+      
     </Modal.Body>
   </Modal>
 }
-
 export default ModalUploadImage
