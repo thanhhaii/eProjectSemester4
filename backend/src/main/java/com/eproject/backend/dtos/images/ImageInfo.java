@@ -13,5 +13,6 @@ public class ImageInfo {
     private int height;
     private String description;
     private String title;
+    private String fileType;
 
 }

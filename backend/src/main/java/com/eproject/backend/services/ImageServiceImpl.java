@@ -39,8 +39,7 @@ public class ImageServiceImpl implements ImageService {
                     uploadResult.get("secure_url").toString(),
                     Integer.parseInt(uploadResult.get("height").toString()),
                     Integer.parseInt(uploadResult.get("width").toString()),
-                    fileType,
-                    new Date()
+                    fileType
             );
             Image imageResult = imageRepository.save(new Image(uploadFileResponse.getUrl(), userID));
             imageCountService.createImageCount(imageResult.getId());

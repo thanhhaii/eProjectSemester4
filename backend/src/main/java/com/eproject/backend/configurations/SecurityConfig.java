@@ -43,8 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(POST, "/users/register").permitAll()
                 .antMatchers("/users/reset-password", "/auth/refresh-token").permitAll()
                 .antMatchers(PUT, "/users").hasAnyAuthority(ERole.ROLE_USER.toString())
-                .antMatchers(GET, "/users/me").hasAnyAuthority(ERole.ROLE_USER.toString())
-                .antMatchers("/users/verify-email").hasAnyAuthority(ERole.ROLE_USER.toString());
+                .antMatchers(GET, "/users/me").hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())
+                .antMatchers("/users/verify-email").hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString());
         http.authorizeRequests().antMatchers(GET, "/categories").permitAll()
                 .antMatchers(POST, "/categories").hasAnyAuthority(ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())
                 .antMatchers(PUT, "/categories").hasAnyAuthority(ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())

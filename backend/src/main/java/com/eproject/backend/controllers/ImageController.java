@@ -13,6 +13,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/images")
@@ -27,7 +30,8 @@ public class ImageController{
     public ResponseEntity<UploadFileResponse> uploadImage(@RequestParam("file") MultipartFile file){
         UsernamePasswordAuthenticationToken userContext = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         UploadFileResponse result = imageService.uploadFile(file, userContext.getPrincipal().toString());
-        return ResponseEntity.ok(result);
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/images/upload").toUriString());
+        return ResponseEntity.created(uri).body(result);
     }
 
     @DeleteMapping("/{id}")
