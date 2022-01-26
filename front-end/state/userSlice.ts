@@ -1,5 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { User } from "../models/User"
+import { User } from "../models/Userm"
 import { AppState, UserState } from "./models"
 
 const initialState: UserState = {
@@ -21,6 +21,10 @@ export const userSlice = createSlice({
 export const { userIdentified } = userSlice.actions
 
 export const selectUserState = (state: AppState) => state.user
+
+export const selectUserSigned = createSelector(selectUserState, userState => {
+  return !!userState.value
+})
 
 export const selectUser = createSelector(selectUserState, userState => userState.value)
 

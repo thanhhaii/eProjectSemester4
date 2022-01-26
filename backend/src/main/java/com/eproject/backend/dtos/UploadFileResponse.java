@@ -16,6 +16,6 @@ public class UploadFileResponse {
     private Number height;
     private Number width;
     private String fileType;
-    private Date created_at;
+    private String fileID;
 
 }

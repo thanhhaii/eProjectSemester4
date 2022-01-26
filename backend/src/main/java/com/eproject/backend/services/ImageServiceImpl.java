@@ -40,10 +40,11 @@ public class ImageServiceImpl implements ImageService {
                     Integer.parseInt(uploadResult.get("height").toString()),
                     Integer.parseInt(uploadResult.get("width").toString()),
                     fileType,
-                    new Date()
+                    ""
             );
             Image imageResult = imageRepository.save(new Image(uploadFileResponse.getUrl(), userID));
             imageCountService.createImageCount(imageResult.getId());
+            uploadFileResponse.setFileID(imageResult.getId());
             return uploadFileResponse;
         } catch (Exception e) {
             log.error("Upload file fail: {}", e.getMessage());
@@ -64,7 +65,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public void updateImageInfo(ImageInfo imageInfo, String imageID) throws JsonProcessingException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(imageInfo);
+        String json = ow.writeValueAsString(imageInfo).replace(" ","");
         imageRepository.updateImageInfo(json, imageID);
     }
 }

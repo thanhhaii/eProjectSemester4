@@ -1,5 +1,6 @@
 import serverApi from "services/server"
-import { TokenInfo, parseTokeInfo, isRefreshTokenExpire } from "models/User"
+import { TokenInfo, parseTokeInfo, isRefreshTokenExpire } from "models/Userm"
+import { isBrowser } from "services/ssrutils"
 
 interface Storage {
   setToken(tokenInfo: TokenInfo | null): Promise<void>
@@ -57,7 +58,7 @@ class MemoryStorage implements Storage {
 
 class StorageFactory {
   static create(): Storage {
-    if (typeof window !== "undefined") {
+    if (isBrowser()) {
       return new LocalStorage()
     }
 
@@ -93,8 +94,8 @@ class TokenManager {
     await this._storage.setToken(tokenInfo)
   }
 
-  getToken(): string | undefined{
-    return this._tokenInfo?.accessToken.token
+  getToken(): Promise<TokenInfo | null> {
+    return this._storage.getToken()
   }
 
   dispose() {

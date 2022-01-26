@@ -1,0 +1,55 @@
+@import "styles/variable";
+
+.modalUploadImage {
+  height: 80vh;
+
+  .uploadImageBox {
+    border: 2px dashed $gray;
+    height: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .boxUploadImageSelected {
+    height: 100%;
+  }
+}
+
+.boxImageUploadItem {
+  position: relative;
+
+  .customImage {
+    object-fit: contain;
+    width: 100% !important;
+    position: relative !important;
+    height: unset !important;
+  }
+
+  .unsetImage {
+    width: 100%;
+  }
+  .unsetImage > span {
+    position: unset !important;
+  }
+
+  .boxLoading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.boxUploadMore {
+  border-radius: 5px;
+  border: 2px dashed $gray;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}

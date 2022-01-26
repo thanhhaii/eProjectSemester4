@@ -1,6 +1,8 @@
+import classNames from "classnames"
 import { ButtonHTMLAttributes } from "react"
 
-export interface ButtonLoadingProps extends ButtonHTMLAttributes<HTMLWebViewElement> {
+export interface ButtonLoadingProps
+  extends ButtonHTMLAttributes<HTMLWebViewElement> {
   isLoading: boolean
 }
 
@@ -8,9 +10,10 @@ export default function ButtonLoading(props: ButtonLoadingProps) {
   const { className, type, children, isLoading, disabled, ...rest } = props
   return (
     <button
-      className={className}
+      className={classNames("d-flex", className)}
       type={type || "button"}
-      disabled={isLoading || disabled} {...rest}>
+      disabled={isLoading || disabled}
+      {...rest}>
       {isLoading && (
         <div className="me-1">
           <span
