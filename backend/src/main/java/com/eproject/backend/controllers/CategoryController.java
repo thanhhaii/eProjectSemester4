@@ -2,6 +2,7 @@ package com.eproject.backend.controllers;
 
 import com.eproject.backend.dtos.categories.AddImageToCategory;
 import com.eproject.backend.dtos.categories.CategoryCreate;
+import com.eproject.backend.dtos.categories.CategoryResponse;
 import com.eproject.backend.dtos.categories.CategoryUpdate;
 import com.eproject.backend.entities.Category;
 import com.eproject.backend.entities.ImageCategory;
@@ -9,6 +10,7 @@ import com.eproject.backend.entities.ImageCategoryId;
 import com.eproject.backend.services.CategoryService;
 import com.eproject.backend.services.ImageCategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +31,7 @@ public class CategoryController {
     @GetMapping("")
     public ResponseEntity<?> getAllCategories() {
         try {
-            List<Category> categoryList = categoryService.findAllCategory();
+            List<CategoryResponse> categoryList = categoryService.findAllCategory();
             return ResponseEntity.ok(categoryList);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -83,4 +85,12 @@ public class CategoryController {
         }
     }
 
+    @GetMapping("/typeahead")
+    public ResponseEntity<?> typeAheadCategory(@RequestParam("keyword") String keyword){
+        try {
+            return ResponseEntity.ok(categoryService.getTypeAhead(keyword));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

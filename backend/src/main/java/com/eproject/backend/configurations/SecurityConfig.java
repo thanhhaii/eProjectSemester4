@@ -45,17 +45,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(PUT, "/users").hasAnyAuthority(ERole.ROLE_USER.toString())
                 .antMatchers(GET, "/users/me").hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())
                 .antMatchers("/users/verify-email").hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString());
-        http.authorizeRequests().antMatchers(GET, "/categories").permitAll()
+        http.authorizeRequests().antMatchers(GET, "/categories/**").permitAll()
                 .antMatchers(POST, "/categories").hasAnyAuthority(ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())
                 .antMatchers(PUT, "/categories").hasAnyAuthority(ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())
-                .antMatchers(DELETE, "/categories/{id}").hasAnyAuthority(ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString());
+                .antMatchers(DELETE, "/categories/{id}").hasAnyAuthority(ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())
+                .antMatchers(POST, "/categories/add-category-image").hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString());
 
         http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority(ERole.ROLE_ADMIN.toString());
         http.authorizeRequests().antMatchers(POST, "/images/upload")
                 .hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())
                 .antMatchers(DELETE, "/images/{id}")
                 .hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_MOD.toString(), ERole.ROLE_ADMIN.toString())
-                .antMatchers(PUT, "/update-info/{id}")
+                .antMatchers(PUT, "images/update-info/{id}")
                 .hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_MOD.toString(), ERole.ROLE_ADMIN.toString());
 
         http.authorizeRequests().anyRequest().authenticated();
