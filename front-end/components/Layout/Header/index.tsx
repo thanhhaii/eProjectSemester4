@@ -9,13 +9,15 @@ import Link from "../../Link"
 import { useAppSelector } from "state/hooks"
 import { selectUserSigned } from "state/userSlice"
 import pageUrls from "services/pageUrls"
+import { Category } from "models/Categorym"
 
 export interface HeaderLayoutProps {
   onShowModalUploadImage: () => void
+  categories: Category[]
 }
 
 function HeaderLayout(props: HeaderLayoutProps) {
-  const { onShowModalUploadImage } = props
+  const { onShowModalUploadImage, categories } = props
   const isSigned = useAppSelector(selectUserSigned)
 
   return (
@@ -45,7 +47,7 @@ function HeaderLayout(props: HeaderLayoutProps) {
             />
           </div>
           <div className="col-auto d-flex align-items-center">
-            {!isSigned && (
+            {isSigned ? (
               <>
                 <button
                   className="btn btn btn-white btn-sm me-3 border shadow-none border-1"
@@ -74,15 +76,18 @@ function HeaderLayout(props: HeaderLayoutProps) {
                   </Dropdown.Menu>
                 </Dropdown>
               </>
+            ) : (
+              <>
+                <Link
+                  href={pageUrls.loginPage}
+                  className={classNames("text-dark me-3", styles.signIn)}>
+                  Sign In
+                </Link>
+                <Link href={pageUrls.registerPage} className="text-dark">
+                  Sign Up
+                </Link>
+              </>
             )}
-            <Link
-              href={pageUrls.loginPage}
-              className={classNames("text-dark me-3", styles.signIn)}>
-              Sign In
-            </Link>
-            <Link href={pageUrls.registerPage} className="text-dark">
-              Sign Up
-            </Link>
           </div>
         </div>
       </div>
@@ -95,11 +100,9 @@ function HeaderLayout(props: HeaderLayoutProps) {
           </div>
           <div className="col">
             <ul className={styles.listCategory}>
-              <li>Category</li>
-              <li>Category</li>
-              <li>Category</li>
-              <li>Category</li>
-              <li>Category</li>
+              {categories.map(category => {
+                return <li key={category.id}>{category.categoryName}</li>
+              })}
             </ul>
           </div>
         </div>
