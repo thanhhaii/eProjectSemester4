@@ -1,10 +1,15 @@
-export interface ImageUpload {
+export interface ImageInfo {
   width?: number
   height?: number
-  categoryIDs?: string[]
   description?: string
   title?: string
-  url?: string
-  file?: File
-  blogURL: string
+  fileType?: string
+}
+
+export interface ImageRef {
+  url: string
+  height: number
+  width: number
+  fileType: string
+  fileID: string
 }

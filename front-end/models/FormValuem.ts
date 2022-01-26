@@ -1,4 +1,4 @@
-import { ImageUpload } from "./Imagem"
+import { ImageInfo } from "./Imagem"
 
 export interface LoginFormProps {
   username: string
@@ -21,5 +21,12 @@ export interface ResetPasswordFormProps {
 }
 
 export interface UploadImageFormProps {
-  images: ImageUpload[]
+  images: ImageCategoryInfo[]
+}
+
+export interface ImageCategoryInfo extends ImageInfo {
+  categories?: number[]
+  file?: File
+  url?: string
+  fileID?: string
 }

@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from "react"
 import serverApi from "services/server"
 import { isServer } from "services/ssrutils"
 import tokenManager from "services/token-manager"
+import { setCategory } from "state/categorySlice"
 import { useAppDispatch } from "state/hooks"
 import { userIdentified } from "state/userSlice"
 
@@ -19,7 +20,8 @@ export default function Bootstrap({ children }: AppInitProps) {
     }
 
     async function getUser() {
-      if (!!tokenManager.getToken()) {
+      const token = await tokenManager.getToken()
+      if (token) {
         const user = await serverApi.getMe()
         dispatch(userIdentified(user))
       } else {
@@ -27,7 +29,13 @@ export default function Bootstrap({ children }: AppInitProps) {
       }
     }
 
+    async function getCategory() {
+      const categories = await serverApi.getAllCategory()
+      dispatch(setCategory(categories))
+    }
+
     getUser()
+    getCategory()
     setInitialized(true)
   }, [dispatch, initialized])
 
