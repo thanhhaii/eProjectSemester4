@@ -13,3 +13,8 @@ export interface ResetPasswordRequest {
   token: string
   newPassword: string
 }
+
+export interface AddImageToCategoryRequest {
+  imageID: string
+  categoryIDs: number[]
+}
