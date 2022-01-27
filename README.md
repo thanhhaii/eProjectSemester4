@@ -1,7 +1,18 @@
+<div id="top"></div>
+
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
+
 # eProjectSemester4
+
 Repo for project Semester4 usin Java Spring Boot and Nextjs
 
 ## Backend
+
 Language: Java\
 Framework: Springboot, Spring Security, Spring Data JPA\
 Database: MySQL\
@@ -9,5 +20,6 @@ Note: In this project, you only create database with name photoshare in mysql. W
 Project use cdn of cloudinay to upload image
 
 ## Front-end
+
 Language: Typescript\
 Framework: Nextjs
