@@ -16,7 +16,11 @@ const getImageDomains = () => {
       .filter(t => !!t)
   }
 
-  return domains.concat(["localhost", "images.unsplash.com"])
+  return domains.concat([
+    "localhost",
+    "images.unsplash.com",
+    "res.cloudinary.com",
+  ])
 }
 
 module.exports = {

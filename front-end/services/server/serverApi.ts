@@ -3,13 +3,14 @@ import { isServer } from "services/ssrutils"
 import nprogress from "nprogress"
 import {
   AddImageToCategoryRequest,
+  GetImagesRequest,
   LoginRequest,
   RegisterRequest,
   ResetPasswordRequest,
 } from "./requestModels"
 import { parseTokeInfo, TokenInfo, User } from "models/Userm"
 import tokenManager from "services/token-manager"
-import { ImageInfo, ImageRef } from "models/Imagem"
+import { ImageInfo, ImageItem, ImageRef } from "models/Imagem"
 import { Category, CategoryTypeAhead } from "models/Categorym"
 
 export class ServerApi {
@@ -97,7 +98,17 @@ export class ServerApi {
 
   public async getMe(): Promise<User | null> {
     const resp = await this._axios.get<User>("/users/me", {
-      validateStatus: (status: number) => status === 200 || status === 401,
+      validateStatus: (status: number) => {
+        if (status === 200) {
+          return true
+        }
+
+        if (status === 401 && tokenManager.getToken()) {
+          return false
+        }
+
+        return true
+      },
     })
     if (resp.status === 401) {
       return null
@@ -181,5 +192,26 @@ export class ServerApi {
     return await this._axios.put(`/images/update-info/${fileID}`, imageInfo, {
       validateStatus: (status: number) => status === 200,
     })
+  }
+
+  pageToStartOffset(pageNum: number, pageSize: number): number {
+    return (pageNum - 1) * pageSize
+  }
+
+  public async getImages(request?: GetImagesRequest): Promise<ImageItem[]> {
+    const params = {
+      start: 0,
+      limit: 20,
+      keyword: "",
+      filterType: "",
+      filterValue: "",
+      ...request,
+    } as GetImagesRequest
+    const resp = await this._axios.get("/images", {
+      params: params,
+      validateStatus: (status: number) => status === 200,
+    })
+
+    return resp.data
   }
 }

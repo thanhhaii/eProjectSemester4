@@ -1,12 +1,8 @@
-import type { NextPage } from 'next'
-import styles from 'styles/Home.module.scss'
+import HomePageContainer from "container/HomePage"
+import type { NextPage } from "next"
 
 const Home: NextPage = () => {
-  return (
-    <div className={styles.container}>
-
-    </div>
-  )
+  return <HomePageContainer />
 }
 
 export default Home

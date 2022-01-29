@@ -24,7 +24,7 @@ function HeaderLayout(props: HeaderLayoutProps) {
     <div
       className={classNames(
         styles.headerLayout,
-        "row justify-content-center shadow-sm",
+        "row justify-content-center shadow-lg",
       )}>
       <div className="col-11">
         <div className="row justify-content-between align-items-center h-100">
@@ -94,7 +94,7 @@ function HeaderLayout(props: HeaderLayoutProps) {
       <div className={classNames("col-11", styles.bottomHeader)}>
         <div className="row align-items-center h-100">
           <div className={classNames("col-auto", styles.mainCategory)}>
-            <Link href="#" className="text-black">
+            <Link href={pageUrls.home} className="text-black">
               Editorial
             </Link>
           </div>

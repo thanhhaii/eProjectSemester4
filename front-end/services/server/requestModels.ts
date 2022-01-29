@@ -18,3 +18,11 @@ export interface AddImageToCategoryRequest {
   imageID: string
   categoryIDs: number[]
 }
+
+export interface GetImagesRequest {
+  start?: number
+  limit?: number
+  keyword?: string
+  filterType?: "category" | ""
+  filterValue?: string
+}
