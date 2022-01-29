@@ -8,8 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -25,6 +26,7 @@ public class GetListImageResponse {
     private String userInfo;
     private Date updatedAt;
     private Date createdAt;
+    private List<String> categories = new ArrayList<>();
 
     public GetListImageResponse(Image image) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -40,5 +42,10 @@ public class GetListImageResponse {
         userInfo = image.getUser().getProfile();
         updatedAt = image.getUpdatedAt();
         createdAt = image.getCreatedAt();
+        if(!image.getImageCategories().isEmpty()){
+            image.getImageCategories().forEach(item -> {
+                categories.add(item.getCategory().getCategoryName());
+            });
+        }
     }
 }
