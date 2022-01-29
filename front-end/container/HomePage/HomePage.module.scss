@@ -67,3 +67,35 @@
     }
   }
 }
+
+.modalShowImageDetail {
+  min-width: 85vw;
+}
+
+.modalBody {
+  min-height: 90vh;
+
+  .imageItem {
+    width: 85%;
+    margin: 0 auto;
+    .boxImageModal {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+    }
+  }
+
+  .listInfo {
+    list-style: none;
+    padding-left: 0;
+    li {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .boxImageRelated {
+    width: 80%;
+    margin: 0 auto;
+  }
+}

@@ -9,6 +9,7 @@ import Masonry from "react-masonry-css"
 import { ImageItem } from "models/Imagem"
 import ImageRenderItem from "./ImageRenderItem"
 import classNames from "classnames"
+import ModalShowImage from "./ModalShowImage"
 
 export interface HomePageContainerProps {}
 
@@ -35,7 +36,7 @@ const HomePageContainer = (props: HomePageContainerProps) => {
   const router = useRouter()
   const { keyword } = router.query
   const currentPage = useRef(0)
-  const [showImage, setShowImage] = useState<boolean>(false)
+  const [isShowImage, setShowImage] = useState<boolean>(false)
   const [imageTarget, setImageTarget] = useState<ImageItem | undefined>()
   const [images, setImages] = useState<ImageItem[]>([])
   const {
@@ -81,6 +82,14 @@ const HomePageContainer = (props: HomePageContainerProps) => {
     setShowImage(true)
   }, [])
 
+  const handleGetImageRelated = useCallback(
+    async (category: string): Promise<ImageItem[]> => {
+      const resp = await serverApi.getImages({ filterValue: category })
+      return resp || []
+    },
+    [],
+  )
+
   return (
     <>
       <div className={styles.backgroundPage}>
@@ -109,6 +118,12 @@ const HomePageContainer = (props: HomePageContainerProps) => {
           })}
         </Masonry>
       </div>
+      <ModalShowImage
+        show={isShowImage}
+        onHide={() => setShowImage(false)}
+        imageItem={imageTarget}
+        onGetImageRelated={handleGetImageRelated}
+      />
     </>
   )
 }

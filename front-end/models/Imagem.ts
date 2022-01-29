@@ -24,4 +24,5 @@ export interface ImageItem {
   updatedAt: string
   createdAt: string
   premium: boolean
+  categories: string[]
 }
