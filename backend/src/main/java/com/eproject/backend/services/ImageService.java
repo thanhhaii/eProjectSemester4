@@ -1,10 +1,14 @@
 package com.eproject.backend.services;
 
+import com.eproject.backend.dtos.RequestPagination;
 import com.eproject.backend.dtos.UploadFileResponse;
+import com.eproject.backend.dtos.images.GetListImageResponse;
 import com.eproject.backend.dtos.images.ImageInfo;
+import com.eproject.backend.entities.Image;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ImageService {
@@ -16,4 +20,6 @@ public interface ImageService {
     boolean isOwnerImage(String imageID, String userID);
 
     void updateImageInfo(ImageInfo imageInfo, String imageID) throws JsonProcessingException;
+
+    List<Image> getListImage(RequestPagination requestPagination);
 }

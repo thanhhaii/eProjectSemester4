@@ -1,7 +1,9 @@
 package com.eproject.backend.entities;
 // Generated Jan 3, 2022, 8:04:04 PM by Hibernate Tools 5.1.10.Final
 
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,6 +22,7 @@ import javax.persistence.*;
         @UniqueConstraint(columnNames = "username")})
 @Getter
 @Setter
+@NoArgsConstructor
 public class User implements java.io.Serializable {
 
     @Id
@@ -65,8 +68,8 @@ public class User implements java.io.Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<UserRole> userRoles = new HashSet<UserRole>(0);
 
-    public User() {
-    }
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Set<Image> images = new HashSet<Image>(0);
 
     public User(String username, String email, String password) {
         this.username = username;

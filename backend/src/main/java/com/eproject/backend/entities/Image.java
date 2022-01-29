@@ -2,6 +2,7 @@ package com.eproject.backend.entities;
 // Generated Jan 3, 2022, 8:04:04 PM by Hibernate Tools 5.1.10.Final
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -17,6 +18,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "image", catalog = "photoshare")
 @Data
+@NoArgsConstructor
 public class Image implements java.io.Serializable {
 
     @Id
@@ -48,18 +50,16 @@ public class Image implements java.io.Serializable {
     @Column(name = "updated_at", nullable = false, length = 10)
     private Date updatedAt = new Date();
 
-    @Column(name = "user_id", nullable = false)
-    private String userId;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "image")
     private Set<ImageCategory> imageCategories = new HashSet<ImageCategory>(0);
 
-    public Image() {
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
+    private User user;
 
     public Image(String imageUrl, String userId) {
         this.imageUrl = imageUrl;
-        this.userId = userId;
+        this.user.setId(userId);
     }
 
     public Image(String id, Date createdAt, String imageInfo, String imageUrl, boolean isPremium, Date updatedAt,
@@ -70,7 +70,7 @@ public class Image implements java.io.Serializable {
         this.imageUrl = imageUrl;
         this.isPremium = isPremium;
         this.updatedAt = updatedAt;
-        this.userId = userId;
+        this.user.setId(userId);
         this.imageCategories = imageCategories;
     }
 

@@ -1,6 +1,9 @@
 package com.eproject.backend.entities;
 // Generated Jan 3, 2022, 8:04:04 PM by Hibernate Tools 5.1.10.Final
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,18 +22,36 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "collection_item", catalog = "photoshare")
+@NoArgsConstructor
+@Data
 public class CollectionItem implements java.io.Serializable {
 
-	private Integer id;
-	private Collection collection;
-	private Date createdAt;
-	private String imageInfo;
-	private String imageUrl;
-	private boolean isPremium;
-	private Date updatedAt;
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
 
-	public CollectionItem() {
-	}
+	@Column(name = "id", unique = true, nullable = false)
+	private Integer id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "collection_id", nullable = false)
+	private Collection collection;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "created_at", nullable = false, length = 10)
+	private Date createdAt;
+
+	@Column(name = "image_info", nullable = false)
+	private String imageInfo;
+
+	@Column(name = "image_url", nullable = false, length = 200)
+	private String imageUrl;
+
+	@Column(name = "is_premium", nullable = false)
+	private boolean isPremium;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "updated_at", nullable = false, length = 10)
+	private Date updatedAt;
 
 	public CollectionItem(Collection collection, Date createdAt, String imageInfo, String imageUrl, boolean isPremium,
 			Date updatedAt) {
@@ -39,75 +60,6 @@ public class CollectionItem implements java.io.Serializable {
 		this.imageInfo = imageInfo;
 		this.imageUrl = imageUrl;
 		this.isPremium = isPremium;
-		this.updatedAt = updatedAt;
-	}
-
-	@Id
-	@GeneratedValue(strategy = IDENTITY)
-
-	@Column(name = "id", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "collection_id", nullable = false)
-	public Collection getCollection() {
-		return this.collection;
-	}
-
-	public void setCollection(Collection collection) {
-		this.collection = collection;
-	}
-
-	@Temporal(TemporalType.DATE)
-	@Column(name = "created_at", nullable = false, length = 10)
-	public Date getCreatedAt() {
-		return this.createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	@Column(name = "image_info", nullable = false)
-	public String getImageInfo() {
-		return this.imageInfo;
-	}
-
-	public void setImageInfo(String imageInfo) {
-		this.imageInfo = imageInfo;
-	}
-
-	@Column(name = "image_url", nullable = false, length = 200)
-	public String getImageUrl() {
-		return this.imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
-
-	@Column(name = "is_premium", nullable = false)
-	public boolean isIsPremium() {
-		return this.isPremium;
-	}
-
-	public void setIsPremium(boolean isPremium) {
-		this.isPremium = isPremium;
-	}
-
-	@Temporal(TemporalType.DATE)
-	@Column(name = "updated_at", nullable = false, length = 10)
-	public Date getUpdatedAt() {
-		return this.updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 
