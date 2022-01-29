@@ -13,3 +13,16 @@ export interface ImageRef {
   fileType: string
   fileID: string
 }
+
+export interface ImageItem {
+  id: string
+  imageInfo: ImageInfo | null
+  imageUrl: string
+  userID: string
+  username: string
+  userInfo: string
+  updatedAt: string
+  createdAt: string
+  premium: boolean
+  categories: string[]
+}

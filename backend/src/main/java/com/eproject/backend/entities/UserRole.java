@@ -1,6 +1,9 @@
 package com.eproject.backend.entities;
 // Generated Jan 3, 2022, 8:04:04 PM by Hibernate Tools 5.1.10.Final
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -19,15 +22,27 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "user_role", catalog = "photoshare")
+@Data
+@NoArgsConstructor
 public class UserRole implements java.io.Serializable {
 
-	private UserRoleId id;
-	private Role role;
-	private User user;
-	private Date createdAt;
+	@EmbeddedId
 
-	public UserRole() {
-	}
+	@AttributeOverrides({ @AttributeOverride(name = "roleId", column = @Column(name = "role_id", nullable = false)),
+			@AttributeOverride(name = "userId", column = @Column(name = "user_id", nullable = false)) })
+	private UserRoleId id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "role_id", nullable = false, insertable = false, updatable = false)
+	private Role role;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
+	private User user;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "created_at", nullable = false, length = 10)
+	private Date createdAt;
 
 	public UserRole(UserRoleId id, Role role, User user, Date createdAt) {
 		this.id = id;
@@ -35,47 +50,4 @@ public class UserRole implements java.io.Serializable {
 		this.user = user;
 		this.createdAt = createdAt;
 	}
-
-	@EmbeddedId
-
-	@AttributeOverrides({ @AttributeOverride(name = "roleId", column = @Column(name = "role_id", nullable = false)),
-			@AttributeOverride(name = "userId", column = @Column(name = "user_id", nullable = false)) })
-	public UserRoleId getId() {
-		return this.id;
-	}
-
-	public void setId(UserRoleId id) {
-		this.id = id;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "role_id", nullable = false, insertable = false, updatable = false)
-	public Role getRole() {
-		return this.role;
-	}
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
-	public User getUser() {
-		return this.user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	@Temporal(TemporalType.DATE)
-	@Column(name = "created_at", nullable = false, length = 10)
-	public Date getCreatedAt() {
-		return this.createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
 }

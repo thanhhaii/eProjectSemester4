@@ -54,6 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority(ERole.ROLE_ADMIN.toString());
         http.authorizeRequests().antMatchers(POST, "/images/upload")
                 .hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())
+                .antMatchers(GET, "/images").permitAll()
                 .antMatchers(DELETE, "/images/{id}")
                 .hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_MOD.toString(), ERole.ROLE_ADMIN.toString())
                 .antMatchers(PUT, "images/update-info/{id}")

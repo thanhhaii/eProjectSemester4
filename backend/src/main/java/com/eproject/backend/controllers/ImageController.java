@@ -1,8 +1,11 @@
 package com.eproject.backend.controllers;
 
 import com.eproject.backend.dtos.MessageResponse;
+import com.eproject.backend.dtos.RequestPagination;
 import com.eproject.backend.dtos.UploadFileResponse;
+import com.eproject.backend.dtos.images.GetListImageResponse;
 import com.eproject.backend.dtos.images.ImageInfo;
+import com.eproject.backend.entities.Image;
 import com.eproject.backend.services.ImageCategoryService;
 import com.eproject.backend.services.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/images")
@@ -25,6 +30,27 @@ public class ImageController{
 
     private final ImageService imageService;
     private final ImageCategoryService imageCategoryService;
+
+    @GetMapping("")
+    public ResponseEntity<?> getImages(
+            @RequestParam("start") int start,
+            @RequestParam("limit") int limit,
+            @RequestParam("keyword") String keyword,
+            @RequestParam("filterType") String filterType,
+            @RequestParam("filterValue") String filterValue)
+    {
+        RequestPagination requestPagination = new RequestPagination(start, limit, keyword, filterType, filterValue);
+        try {
+            List<GetListImageResponse> getListImageResponseList = new ArrayList<>();
+            for(Image image: imageService.getListImage(requestPagination)){
+                getListImageResponseList.add(new GetListImageResponse(image));
+            }
+            System.out.println("a");
+            return ResponseEntity.ok(getListImageResponseList);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(new MessageResponse(e.getMessage()));
+        }
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<UploadFileResponse> uploadImage(@RequestParam("file") MultipartFile file){

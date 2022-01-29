@@ -2,9 +2,13 @@ package com.eproject.backend.services;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.eproject.backend.dtos.RequestPagination;
 import com.eproject.backend.dtos.UploadFileResponse;
 import com.eproject.backend.dtos.images.ImageInfo;
+import com.eproject.backend.entities.Category;
 import com.eproject.backend.entities.Image;
+import com.eproject.backend.entities.ImageCategory;
+import com.eproject.backend.repositories.CategoryRepo;
 import com.eproject.backend.repositories.ImageRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,8 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.naming.AuthenticationException;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ public class ImageServiceImpl implements ImageService {
     private final Cloudinary cloudinaryConfig;
     private final ImageRepository imageRepository;
     private final ImageCountService imageCountService;
+    private final CategoryRepo categoryRepo;
 
     @Override
     public UploadFileResponse uploadFile(MultipartFile file, String userID) {
@@ -67,5 +72,18 @@ public class ImageServiceImpl implements ImageService {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(imageInfo).replace(" ","");
         imageRepository.updateImageInfo(json, imageID);
+    }
+
+    @Override
+    public List<Image> getListImage(RequestPagination requestPagination) {
+        List<Image> resp = new ArrayList<>();
+
+        if(requestPagination.getFilterType().equals("category") && !requestPagination.getFilterValue().equals("")){
+            for(ImageCategory imageCategory : categoryRepo.getListImageFromCategory(requestPagination.getFilterValue()).getImageCategories()){
+                resp.add(imageCategory.getImage());
+            }
+            return resp;
+        }
+        return imageRepository.getList(requestPagination.getStart(), requestPagination.getLimit());
     }
 }
