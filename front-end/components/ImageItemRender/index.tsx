@@ -1,15 +1,15 @@
 import { ImageItem } from "models/Imagem"
-import styles from "./HomePage.module.scss"
+import styles from "./ImageItemRender.module.scss"
 import Image from "next/image"
 import NoUserImage from "public/images/noUser.png"
 import classNames from "classnames"
 
-export interface ImageRenderItemProps {
+export interface ImageItemRenderProps {
   imageItem: ImageItem
   onSelectShowImage: () => void
 }
 
-const ImageRenderItem = (props: ImageRenderItemProps) => {
+const ImageItemRender = (props: ImageItemRenderProps) => {
   const { imageItem, onSelectShowImage } = props
 
   return (
@@ -39,4 +39,4 @@ const ImageRenderItem = (props: ImageRenderItemProps) => {
     </div>
   )
 }
-export default ImageRenderItem
+export default ImageItemRender

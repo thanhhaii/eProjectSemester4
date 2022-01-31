@@ -27,4 +27,9 @@ export const selectCategories = createSelector(
   categories => categories.categories,
 )
 
+export const selectListNameCategory = createSelector(
+  selectCategoryState,
+  categories => categories.categories.map(category => category.categoryName),
+)
+
 export default categorySlice.reducer

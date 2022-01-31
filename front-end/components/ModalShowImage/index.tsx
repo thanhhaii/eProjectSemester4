@@ -1,6 +1,6 @@
 import { ImageItem } from "models/Imagem"
 import { Modal } from "react-bootstrap"
-import styles from "./HomePage.module.scss"
+import styles from "./ModalShowImage.module.scss"
 import Image from "next/image"
 import classNames from "classnames"
 import NoUserImage from "public/images/noUser.png"
@@ -9,7 +9,7 @@ import { IconCalendarTime } from "@tabler/icons"
 import fileDownload from "js-file-download"
 import { Format } from "services/timeutil"
 import Masonry from "react-masonry-css"
-import ImageRenderItem from "./ImageRenderItem"
+import ImageRenderItem from "../ImageItemRender"
 
 export interface ModalShowImageProps {
   show: boolean
@@ -28,7 +28,8 @@ const ModalShowImage = (props: ModalShowImageProps) => {
     }
 
     ;(async () => {
-      setImageRelated(await onGetImageRelated(imageItem.categories[0]))
+      const resp = await onGetImageRelated(imageItem.categories[0])
+      setImageRelated(resp.filter(image => image.id !== imageItem.id))
     })()
   }, [imageItem, onGetImageRelated])
 
