@@ -24,7 +24,7 @@ function HeaderLayout(props: HeaderLayoutProps) {
     <div
       className={classNames(
         styles.headerLayout,
-        "row justify-content-center shadow-lg",
+        "row justify-content-center shadow",
       )}>
       <div className="col-11">
         <div className="row justify-content-between align-items-center h-100">
@@ -101,7 +101,14 @@ function HeaderLayout(props: HeaderLayoutProps) {
           <div className="col">
             <ul className={styles.listCategory}>
               {categories.map(category => {
-                return <li key={category.id}>{category.categoryName}</li>
+                return (
+                  <li key={category.id}>
+                    <Link
+                      href={pageUrls.listImageCategory(category.categoryName)}>
+                      {category.categoryName}
+                    </Link>
+                  </li>
+                )
               })}
             </ul>
           </div>

@@ -10,7 +10,7 @@ export default function ButtonLoading(props: ButtonLoadingProps) {
   const { className, type, children, isLoading, disabled, ...rest } = props
   return (
     <button
-      className={classNames("d-flex", className)}
+      className={classNames("d-flex justify-content-center", className)}
       type={type || "button"}
       disabled={isLoading || disabled}
       {...rest}>

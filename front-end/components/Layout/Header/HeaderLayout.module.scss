@@ -48,6 +48,10 @@
       font-weight: 400;
       color: rgba(gray, 0.9);
 
+      a:hover {
+        color: rgba(gray, 0.9);
+      }
+
       &:first-child {
         margin-left: 0;
       }
