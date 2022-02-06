@@ -1,4 +1,5 @@
 import { ImageInfo } from "./Imagem"
+import { UserAbout, UserProfile } from "./Userm"
 
 export interface LoginFormProps {
   username: string
@@ -29,4 +30,12 @@ export interface ImageCategoryInfo extends ImageInfo {
   file?: File
   url?: string
   fileID?: string
+}
+
+export interface UpdateUserProfile extends UserProfile, UserAbout {}
+
+export interface ChangePassword {
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
 }

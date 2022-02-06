@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import FormUserLayout from "components/Layout/FormUser/FormUserLayout"
 import { Formik, Field, Form, ErrorMessage } from "formik"
 import { ResetPasswordFormProps } from "models/FormValuem"
@@ -12,9 +12,7 @@ import ButtonLoading from "../../components/ButtonLoading"
 import ModalSuccess from "../../components/ModalSuccess"
 import { useIsomorphicLayoutEffect } from "react-use"
 
-export interface ResetPasswordPageProps {
-
-}
+export interface ResetPasswordPageProps {}
 
 const initialValue: ResetPasswordFormProps = {
   newPassword: "",
@@ -31,7 +29,10 @@ const validation = (): yup.ObjectSchema<any> =>
     confirmPassword: yup
       .string()
       .min(5, "Password too short")
-      .oneOf([yup.ref("newPassword"), null], "Confirm password not match with new password")
+      .oneOf(
+        [yup.ref("newPassword"), null],
+        "Confirm password not match with new password",
+      )
       .required("Confirm password can't be blank"),
   })
 
@@ -53,30 +54,33 @@ function ResetPasswordContainer(props: ResetPasswordPageProps) {
     }
   }, [router.isReady, t])
 
-  const handleSubmit = useCallback(async (values: ResetPasswordFormProps) => {
-    try {
-      if (!t) {
-        return
-      }
-      setLoading(true)
-      setError("")
-      await serverApi.resetPassword({
-        token: t.toString(),
-        newPassword: values.newPassword,
-      })
-      setSuccess(true)
-    } catch (e) {
-      if (axios.isAxiosError(e)) {
-        const error = e as AxiosError
-        if (error.response?.data.message) {
-          setError(error.response?.data.message)
-        } else {
-          setError("Internal server error")
+  const handleSubmit = useCallback(
+    async (values: ResetPasswordFormProps) => {
+      try {
+        if (!t) {
+          return
+        }
+        setLoading(true)
+        setError("")
+        await serverApi.resetPassword({
+          token: t.toString(),
+          newPassword: values.newPassword,
+        })
+        setSuccess(true)
+      } catch (e) {
+        if (axios.isAxiosError(e)) {
+          const error = e as AxiosError
+          if (error.response?.data.message) {
+            setError(error.response?.data.message)
+          } else {
+            setError("Internal server error")
+          }
         }
       }
-    }
-    setLoading(false)
-  }, [t])
+      setLoading(false)
+    },
+    [t],
+  )
 
   const handleTimeOut = useCallback(async () => {
     await router.replace(pageUrls.loginPage)
@@ -84,7 +88,10 @@ function ResetPasswordContainer(props: ResetPasswordPageProps) {
 
   return (
     <FormUserLayout>
-      <Formik initialValues={initialValue} onSubmit={handleSubmit} validationSchema={validationSchema}>
+      <Formik
+        initialValues={initialValue}
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}>
         {formik => {
           return (
             <Form className="row justify-content-center h-100 align-items-center">
@@ -92,12 +99,18 @@ function ResetPasswordContainer(props: ResetPasswordPageProps) {
                 <div className="row">
                   <div className="col-12">
                     <h1>Reset Password</h1>
-                    <p className="gray-600">Enter new password and then repeat it</p>
+                    <p className="gray-600">
+                      Enter new password and then repeat it
+                    </p>
                     <hr className="my-3" />
                   </div>
                   <div className="col-12">
-                    {error !== "" && <p className="text-danger mb-1">{error}</p>}
-                    <label htmlFor="newPassword" className="form-label">New Password</label>
+                    {error !== "" && (
+                      <p className="text-danger mb-1">{error}</p>
+                    )}
+                    <label htmlFor="newPassword" className="form-label">
+                      New Password
+                    </label>
                     <Field
                       type={isShowPassword ? "text" : "password"}
                       className="form-control fw-light"
@@ -110,7 +123,9 @@ function ResetPasswordContainer(props: ResetPasswordPageProps) {
                     </span>
                   </div>
                   <div className="col-12 mt-3">
-                    <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+                    <label htmlFor="confirmPassword" className="form-label">
+                      Confirm Password
+                    </label>
                     <Field
                       type={isShowPassword ? "text" : "password"}
                       className="form-control fw-light"
@@ -125,20 +140,31 @@ function ResetPasswordContainer(props: ResetPasswordPageProps) {
                   <div className="col-12 my-3 d-flex justify-content-between">
                     <div>
                       <input
-                        type="checkbox" id="showPassword"
+                        type="checkbox"
+                        id="showPassword"
                         className="form-check-input me-2"
                         checked={isShowPassword}
-                        onChange={(e) => setShowPassword(e.target.checked)} />
-                      <label htmlFor="showPassword" className="form-label">Show password</label>
+                        onChange={e => setShowPassword(e.target.checked)}
+                      />
+                      <label htmlFor="showPassword" className="form-label">
+                        Show password
+                      </label>
                     </div>
                   </div>
                   <div className="col-12 mb-3">
-                    <ButtonLoading isLoading={isLoading} className="btn btn-primary w-100" type="submit">
+                    <ButtonLoading
+                      isLoading={isLoading}
+                      className="btn btn-primary w-100"
+                      type="submit">
                       Reset Password
                     </ButtonLoading>
                   </div>
                   <div className="col-12 text-center">
-                    <Link href={pageUrls.registerPage} className="fw-bold small">Back to login</Link>
+                    <Link
+                      href={pageUrls.registerPage}
+                      className="fw-bold small">
+                      Back to login
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -146,11 +172,12 @@ function ResetPasswordContainer(props: ResetPasswordPageProps) {
           )
         }}
       </Formik>
-      <ModalSuccess content="Reset password success, you can use a new password to log in and use all features!"
-                    show={isSuccess} onHide={() => {
-      }}
-                    onTimeOut={handleTimeOut}
-                    time={5}
+      <ModalSuccess
+        content="Reset password success, you can use a new password to log in and use all features!"
+        show={isSuccess}
+        onHide={() => {}}
+        onTimeOut={handleTimeOut}
+        time={5}
       />
     </FormUserLayout>
   )

@@ -13,6 +13,7 @@ import { Category } from "models/Categorym"
 
 export interface HeaderLayoutProps {
   onShowModalUploadImage: () => void
+  // onChangePage: (pageUrls: string) => void
   categories: Category[]
 }
 
@@ -66,7 +67,7 @@ function HeaderLayout(props: HeaderLayoutProps) {
                 <Dropdown align="end">
                   <Dropdown.Toggle as={CustomToggle} />
                   <Dropdown.Menu className="mt-3">
-                    <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+                    <Dropdown.Item as={Link} href={pageUrls.profile.myprofile}>Profile</Dropdown.Item>
                     <Dropdown.Item href="#/action-2">
                       Another action
                     </Dropdown.Item>

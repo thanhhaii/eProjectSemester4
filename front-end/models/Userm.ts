@@ -4,16 +4,22 @@ export interface User {
   readonly id: string
   username: string
   email: string
-  profile: UserProfile,
+  profile?: UserProfile
+  about?: UserAbout
   isActive: boolean
   roles: string[]
 }
 
 export interface UserProfile {
-  firstName: string
-  lastName: string
-  phone: number
-  address: string
+  firstName?: string
+  lastName?: string
+  phone?: number
+  avatar?: string
+}
+
+export interface UserAbout {
+  location?: string
+  bio?: string
 }
 
 export interface TokenStringInfo {
