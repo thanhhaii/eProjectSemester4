@@ -5,7 +5,10 @@ import com.eproject.backend.dtos.RequestPagination;
 import com.eproject.backend.dtos.UploadFileResponse;
 import com.eproject.backend.dtos.images.GetListImageResponse;
 import com.eproject.backend.dtos.images.ImageInfo;
+import com.eproject.backend.dtos.images.ImageUpdateInfo;
 import com.eproject.backend.entities.Image;
+import com.eproject.backend.entities.ImageCategory;
+import com.eproject.backend.entities.ImageCategoryId;
 import com.eproject.backend.services.ImageCategoryService;
 import com.eproject.backend.services.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -75,13 +78,21 @@ public class ImageController{
     }
 
     @PutMapping("/update-info/{id}")
-    public ResponseEntity<?> updateInfoImage(@PathVariable("id") String imageID, ImageInfo imageInfo){
+    public ResponseEntity<?> updateInfoImage(@PathVariable("id") String imageID,@RequestBody ImageUpdateInfo imageUpdateInfo){
         try {
             UsernamePasswordAuthenticationToken userContext = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
             if(!imageService.isOwnerImage(imageID, userContext.getPrincipal().toString())){
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
-            imageService.updateImageInfo(imageInfo, imageID);
+            imageService.updateImageInfo(imageUpdateInfo, imageID);
+            if(imageUpdateInfo.getCategoryIDs() != null){
+                imageCategoryService.deleteImageCategory(imageID);
+                List<ImageCategory> imageCategories = new ArrayList<>();
+                imageUpdateInfo.getCategoryIDs().forEach(category -> {
+                    imageCategories.add(new ImageCategory(new ImageCategoryId(imageID, category)));
+                });
+                imageCategoryService.addImageCategory(imageCategories);
+            }
             return ResponseEntity.status(HttpStatus.OK).build();
         }catch (Exception e){
             return ResponseEntity.internalServerError().body(new MessageResponse(e.getMessage()));

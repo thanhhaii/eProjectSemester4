@@ -5,10 +5,12 @@ import com.cloudinary.utils.ObjectUtils;
 import com.eproject.backend.dtos.RequestPagination;
 import com.eproject.backend.dtos.UploadFileResponse;
 import com.eproject.backend.dtos.images.ImageInfo;
+import com.eproject.backend.dtos.images.ImageUpdateInfo;
 import com.eproject.backend.entities.Category;
 import com.eproject.backend.entities.Image;
 import com.eproject.backend.entities.ImageCategory;
 import com.eproject.backend.repositories.CategoryRepo;
+import com.eproject.backend.repositories.ImageCategoryRepo;
 import com.eproject.backend.repositories.ImageRepository;
 import com.eproject.backend.repositories.UserRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,6 +35,7 @@ public class ImageServiceImpl implements ImageService {
     private final ImageCountService imageCountService;
     private final CategoryRepo categoryRepo;
     private final UserRepo userRepo;
+    private final ImageCategoryRepo imageCategoryRepo;
 
     @Override
     public UploadFileResponse uploadFile(MultipartFile file, String userID) {
@@ -70,9 +73,17 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void updateImageInfo(ImageInfo imageInfo, String imageID) throws JsonProcessingException {
+    public void updateImageInfo(ImageUpdateInfo imageUpdateInfo, String imageID) throws JsonProcessingException {
+        Image image = imageRepository.findById(imageID).get();
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(imageInfo).replace(" ","");
+        ObjectMapper mapper = new ObjectMapper();
+        ImageInfo imageInfo = new ImageInfo();
+        if (image.getImageInfo() != null) {
+            imageInfo = mapper.readValue(image.getImageInfo(), ImageInfo.class);
+        }
+        imageInfo.setTitle(imageUpdateInfo.getTitle());
+        imageInfo.setDescription(imageUpdateInfo.getDescription());
+        String json = ow.writeValueAsString(imageInfo);
         imageRepository.updateImageInfo(json, imageID);
     }
 
@@ -80,8 +91,8 @@ public class ImageServiceImpl implements ImageService {
     public List<Image> getListImage(RequestPagination requestPagination) {
         List<Image> resp = new ArrayList<>();
 
-        if(requestPagination.getFilterType().equals("category") && !requestPagination.getFilterValue().equals("")){
-            for(ImageCategory imageCategory : categoryRepo.getListImageFromCategory(requestPagination.getFilterValue()).getImageCategories()){
+        if (requestPagination.getFilterType().equals("category") && !requestPagination.getFilterValue().equals("")) {
+            for (ImageCategory imageCategory : categoryRepo.getListImageFromCategory(requestPagination.getFilterValue()).getImageCategories()) {
                 resp.add(imageCategory.getImage());
             }
             return resp;
