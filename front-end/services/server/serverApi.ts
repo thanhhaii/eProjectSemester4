@@ -8,7 +8,13 @@ import {
   RegisterRequest,
   ResetPasswordRequest,
 } from "./requestModels"
-import { parseTokeInfo, TokenInfo, User } from "models/Userm"
+import {
+  parseTokeInfo,
+  TokenInfo,
+  User,
+  UserAbout,
+  UserProfile,
+} from "models/Userm"
 import tokenManager from "services/token-manager"
 import { ImageInfo, ImageItem, ImageRef } from "models/Imagem"
 import { Category, CategoryTypeAhead } from "models/Categorym"
@@ -213,5 +219,41 @@ export class ServerApi {
     })
 
     return resp.data
+  }
+
+  public async updateUserProfile(
+    userProfile: UserProfile,
+    userAbout: UserAbout,
+  ): Promise<AxiosResponse> {
+    const resp = await this._axios.put(
+      "/users/update-profile",
+      {
+        userProfile,
+        userAbout,
+      },
+      {
+        validateStatus: (status: number) => status === 200,
+      },
+    )
+
+    return resp
+  }
+
+  public async changePassword(
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<AxiosResponse> {
+    const resp = await this._axios.put(
+      "/users/change-password",
+      {
+        currentPassword,
+        newPassword,
+      },
+      {
+        validateStatus: (status: number) => status === 200,
+      },
+    )
+
+    return resp
   }
 }

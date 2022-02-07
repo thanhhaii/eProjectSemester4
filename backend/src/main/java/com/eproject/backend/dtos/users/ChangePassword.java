@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-public class UserProfileUpdate {
+public class ChangePassword {
 
-    private UserProfile userProfile;
-    private UserAbout userAbout;
+    private String currentPassword;
+    private String newPassword;
 
 }

@@ -10,6 +10,7 @@ import com.eproject.backend.entities.Image;
 import com.eproject.backend.entities.ImageCategory;
 import com.eproject.backend.repositories.CategoryRepo;
 import com.eproject.backend.repositories.ImageRepository;
+import com.eproject.backend.repositories.UserRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -31,6 +32,7 @@ public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
     private final ImageCountService imageCountService;
     private final CategoryRepo categoryRepo;
+    private final UserRepo userRepo;
 
     @Override
     public UploadFileResponse uploadFile(MultipartFile file, String userID) {
@@ -47,7 +49,7 @@ public class ImageServiceImpl implements ImageService {
                     fileType,
                     ""
             );
-            Image imageResult = imageRepository.save(new Image(uploadFileResponse.getUrl(), userID));
+            Image imageResult = imageRepository.save(new Image(uploadFileResponse.getUrl(), userRepo.findById(userID).get()));
             imageCountService.createImageCount(imageResult.getId());
             uploadFileResponse.setFileID(imageResult.getId());
             return uploadFileResponse;

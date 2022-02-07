@@ -1,5 +1,6 @@
 package com.eproject.backend.dtos.images;
 
+import com.eproject.backend.dtos.users.UserProfile;
 import com.eproject.backend.entities.Image;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,7 +24,7 @@ public class GetListImageResponse {
     private boolean isPremium = false;
     private String userID;
     private String username;
-    private String userInfo;
+    private UserProfile userInfo;
     private Date updatedAt;
     private Date createdAt;
     private List<String> categories = new ArrayList<>();
@@ -35,11 +36,13 @@ public class GetListImageResponse {
         if(image.getImageInfo() != null){
             imageInfo = mapper.readValue(image.getImageInfo(), ImageInfo.class);
         }
+        if(image.getUser().getProfile() != null){
+            userInfo = mapper.readValue(image.getUser().getProfile(), UserProfile.class);
+        }
         imageUrl = image.getImageUrl();
         isPremium = image.isPremium();
         userID = image.getUser().getId();
         username = image.getUser().getUsername();
-        userInfo = image.getUser().getProfile();
         updatedAt = image.getUpdatedAt();
         createdAt = image.getCreatedAt();
         if(!image.getImageCategories().isEmpty()){

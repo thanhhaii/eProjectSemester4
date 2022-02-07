@@ -45,7 +45,6 @@ public class ImageController{
             for(Image image: imageService.getListImage(requestPagination)){
                 getListImageResponseList.add(new GetListImageResponse(image));
             }
-            System.out.println("a");
             return ResponseEntity.ok(getListImageResponseList);
         }catch (Exception e){
             return ResponseEntity.internalServerError().body(new MessageResponse(e.getMessage()));
