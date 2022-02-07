@@ -29,3 +29,17 @@
     margin: 0 auto;
   }
 }
+
+.modalUpdateImage {
+  height: 500px;
+  padding: 0;
+}
+
+.modalBorder {
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.blurBg {
+  z-index: 1055;
+}

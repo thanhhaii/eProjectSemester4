@@ -10,6 +10,8 @@ import { ImageItem } from "models/Imagem"
 import ImageRenderItem from "components/ImageItemRender"
 import classNames from "classnames"
 import dynamic from "next/dynamic"
+import { useUser } from "state/hooks"
+import { UpdateImageInfo } from "models/FormValuem"
 
 const ModalShowImage = dynamic(() => import("components/ModalShowImage"), {
   ssr: false,
@@ -38,6 +40,7 @@ const fetchImages = async (params: QueryFunctionContext<QueryKey, number>) => {
 
 const HomePageContainer = (props: HomePageContainerProps) => {
   const router = useRouter()
+  const user = useUser()
   const { keyword } = router.query
   const currentPage = useRef(0)
   const [isShowImage, setShowImage] = useState<boolean>(false)
@@ -45,6 +48,7 @@ const HomePageContainer = (props: HomePageContainerProps) => {
   const [images, setImages] = useState<ImageItem[]>([])
   const {
     data,
+    refetch,
     fetchNextPage,
     hasNextPage,
     isFetching,
@@ -94,6 +98,21 @@ const HomePageContainer = (props: HomePageContainerProps) => {
     [],
   )
 
+  const handleUpdateImage = useCallback(
+    async (values: UpdateImageInfo, imageId: string) => {
+      await serverApi.updateImageInfo(
+        {
+          title: values.title,
+          description: values.description,
+          categoryIDs: values.categoryIDs,
+        },
+        imageId,
+      )
+      refetch()
+    },
+    [refetch],
+  )
+
   return (
     <>
       <div className={styles.backgroundPage}>
@@ -123,6 +142,8 @@ const HomePageContainer = (props: HomePageContainerProps) => {
         </Masonry>
       </div>
       <ModalShowImage
+        handleUpdateImage={handleUpdateImage}
+        user={user}
         show={isShowImage}
         onHide={() => setShowImage(false)}
         imageItem={imageTarget}

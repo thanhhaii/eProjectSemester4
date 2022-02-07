@@ -6,9 +6,10 @@ import Masonry from "react-masonry-css"
 import { QueryFunctionContext, useInfiniteQuery } from "react-query"
 import pageUrls from "services/pageUrls"
 import serverApi from "services/server"
-import { useCategory } from "state/hooks"
+import { useCategory, useUser } from "state/hooks"
 import ImageRenderItem from "components/ImageItemRender"
 import dynamic from "next/dynamic"
+import { UpdateImageInfo } from "models/FormValuem"
 
 const ModalShowImage = dynamic(() => import("components/ModalShowImage"), {
   ssr: false,
@@ -43,6 +44,7 @@ const ListImageCategoryContainer = (props: ListImageCategoryContainerProps) => {
   const categories = useCategory()
   const { keyword } = router.query
   const currentPage = useRef(0)
+  const user = useUser()
   const categoryName = router.query.categoryName?.toString() || ""
   const [category, setCategory] = useState<Category>()
   const [images, setImages] = useState<ImageItem[]>([])
@@ -51,6 +53,7 @@ const ListImageCategoryContainer = (props: ListImageCategoryContainerProps) => {
 
   const {
     data,
+    refetch,
     fetchNextPage,
     hasNextPage,
     isFetching,
@@ -89,9 +92,15 @@ const ListImageCategoryContainer = (props: ListImageCategoryContainerProps) => {
   }, [data])
 
   useEffect(() => {
+    if (!router.isReady) {
+      return
+    }
     if (
       categoryName === "" ||
-      !categories.some(category => category.categoryName === categoryName)
+      !categories.some(
+        category =>
+          category.categoryName.toLowerCase() === categoryName.toLowerCase(),
+      )
     ) {
       router.replace(pageUrls.notFound)
       return
@@ -101,7 +110,8 @@ const ListImageCategoryContainer = (props: ListImageCategoryContainerProps) => {
         setCategory(category)
       }
     })
-  })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router])
 
   const handleSelectShowImage = useCallback((imageItem: ImageItem) => {
     setImageTarget(imageItem)
@@ -117,6 +127,21 @@ const ListImageCategoryContainer = (props: ListImageCategoryContainerProps) => {
       return resp || []
     },
     [],
+  )
+
+  const handleUpdateImage = useCallback(
+    async (values: UpdateImageInfo, imageId: string) => {
+      await serverApi.updateImageInfo(
+        {
+          title: values.title,
+          description: values.description,
+          categoryIDs: values.categoryIDs,
+        },
+        imageId,
+      )
+      refetch()
+    },
+    [refetch],
   )
 
   return (
@@ -144,6 +169,8 @@ const ListImageCategoryContainer = (props: ListImageCategoryContainerProps) => {
         </div>
       </div>
       <ModalShowImage
+        handleUpdateImage={handleUpdateImage}
+        user={user}
         show={isShowImage}
         onHide={() => setShowImage(false)}
         imageItem={imageTarget}

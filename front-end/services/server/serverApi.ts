@@ -7,6 +7,7 @@ import {
   LoginRequest,
   RegisterRequest,
   ResetPasswordRequest,
+  UpdateImageInfo,
 } from "./requestModels"
 import {
   parseTokeInfo,
@@ -16,7 +17,7 @@ import {
   UserProfile,
 } from "models/Userm"
 import tokenManager from "services/token-manager"
-import { ImageInfo, ImageItem, ImageRef } from "models/Imagem"
+import { ImageItem, ImageRef } from "models/Imagem"
 import { Category, CategoryTypeAhead } from "models/Categorym"
 
 export class ServerApi {
@@ -191,15 +192,6 @@ export class ServerApi {
     )
   }
 
-  public async updateImageInfo(
-    imageInfo: ImageInfo,
-    fileID: string,
-  ): Promise<AxiosResponse> {
-    return await this._axios.put(`/images/update-info/${fileID}`, imageInfo, {
-      validateStatus: (status: number) => status === 200,
-    })
-  }
-
   pageToStartOffset(pageNum: number, pageSize: number): number {
     return (pageNum - 1) * pageSize
   }
@@ -255,5 +247,14 @@ export class ServerApi {
     )
 
     return resp
+  }
+
+  public async updateImageInfo(
+    values: UpdateImageInfo,
+    imageID: string,
+  ): Promise<AxiosResponse> {
+    return await this._axios.put(`/images/update-info/${imageID}`, values, {
+      validateStatus: (status: number) => status === 200,
+    })
   }
 }

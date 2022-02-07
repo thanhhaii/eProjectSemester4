@@ -39,3 +39,10 @@ export interface ChangePassword {
   newPassword: string
   confirmPassword: string
 }
+
+export interface UpdateImageInfo {
+  categories: string[]
+  title: string
+  description: string
+  categoryIDs: number[]
+}
