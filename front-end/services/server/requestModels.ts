@@ -26,3 +26,9 @@ export interface GetImagesRequest {
   filterType?: "category" | ""
   filterValue?: string
 }
+
+export interface UpdateImageInfo {
+  categoryIDs: number[]
+  title: string
+  description: string
+}

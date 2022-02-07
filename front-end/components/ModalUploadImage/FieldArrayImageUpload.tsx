@@ -4,7 +4,7 @@ import { Category } from "models/Categorym"
 import { ImageCategoryInfo, UploadImageFormProps } from "models/FormValuem"
 import { ImageRef } from "models/Imagem"
 import { useCallback, useEffect, useRef } from "react"
-import FieldSelectCategory from "./FieldSelectCategory"
+import FieldSelectCategory from "../FieldSelectCategory"
 import ImageUploadItem from "./ImageUploadItem"
 import styles from "./ModalUploadImage.module.scss"
 
