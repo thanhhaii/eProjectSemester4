@@ -4,7 +4,7 @@ import styles from "./ModalShowImage.module.scss"
 import Image from "next/image"
 import classNames from "classnames"
 import NoUserImage from "public/images/noUser.png"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { IconCalendarTime } from "@tabler/icons"
 import fileDownload from "js-file-download"
 import { Format } from "services/timeutil"
@@ -41,6 +41,13 @@ const ModalShowImage = (props: ModalShowImageProps) => {
     fileDownload(imageItem.imageUrl, "image")
   }, [imageItem])
 
+  const nameOwner = useMemo(() => {
+    if (imageItem?.userInfo.firstName || imageItem?.userInfo.lastName) {
+      return `${imageItem?.userInfo.firstName} ${imageItem?.userInfo.lastName}`
+    }
+    return imageItem?.username
+  }, [imageItem])
+
   if (!imageItem) {
     return <></>
   }
@@ -56,14 +63,14 @@ const ModalShowImage = (props: ModalShowImageProps) => {
         <div className="d-flex align-items-center justify-content-between mb-3">
           <div className="d-flex align-items-center">
             <Image
-              src={NoUserImage}
+              src={imageItem.userInfo.avatar || NoUserImage}
               width={30}
               height={30}
               className="rounded-circle"
               objectFit={"cover"}
               alt="avatar no user"
             />
-            <p className="mb-0 ms-2">{imageItem.username}</p>
+            <p className="mb-0 ms-2">{nameOwner}</p>
           </div>
           <div>
             <button

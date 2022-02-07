@@ -1,3 +1,5 @@
+import { UserProfile } from "./Userm"
+
 export interface ImageInfo {
   width?: number
   height?: number
@@ -20,7 +22,7 @@ export interface ImageItem {
   imageUrl: string
   userID: string
   username: string
-  userInfo: string
+  userInfo: UserProfile
   updatedAt: string
   createdAt: string
   premium: boolean
