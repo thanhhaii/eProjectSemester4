@@ -8,15 +8,17 @@ import { useDropzone } from "react-dropzone"
 import classNames from "classnames"
 import styles from "./UpdateAccount.module.scss"
 import serverApi from "services/server"
-import { useUser } from "state/hooks"
+import { useAppDispatch, useUser } from "state/hooks"
 import AccountLayout from "components/Layout/Account"
 import { useRouter } from "next/router"
+import { userIdentified } from "state/userSlice"
 
 export interface AccountContainerProps {}
 
 const AccountContainer = (props: AccountContainerProps) => {
   const user = useUser()
   const router = useRouter()
+  const dispatch = useAppDispatch()
 
   const initialValues = useMemo(() => {
     return {
@@ -42,20 +44,25 @@ const AccountContainer = (props: AccountContainerProps) => {
     }
   }, [avatarUrlTemp])
 
-  const handleSubmit = useCallback(async (values: UpdateUserProfile) => {
-    await serverApi.updateUserProfile(
-      {
-        avatar: values.avatar,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        phone: values.phone,
-      },
-      {
-        bio: values.bio,
-        location: values.location,
-      },
-    )
-  }, [])
+  const handleSubmit = useCallback(
+    async (values: UpdateUserProfile) => {
+      await serverApi.updateUserProfile(
+        {
+          avatar: values.avatar,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          phone: values.phone,
+        },
+        {
+          bio: values.bio,
+          location: values.location,
+        },
+      )
+      const user = await serverApi.getMe()
+      dispatch(userIdentified(user))
+    },
+    [dispatch],
+  )
 
   const formik = useFormik({
     initialValues: initialValues,
@@ -102,6 +109,7 @@ const AccountContainer = (props: AccountContainerProps) => {
                   width={120}
                   height={120}
                   className="rounded-circle"
+                  objectFit="cover"
                 />
                 <input
                   {...getInputProps({ className: "d-none" })}

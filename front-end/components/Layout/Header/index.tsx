@@ -4,12 +4,16 @@ import Image from "next/image"
 import NoUserImage from "public/images/noUser.png"
 import { IconMenu2, IconSearch } from "@tabler/icons"
 import Dropdown from "react-bootstrap/Dropdown"
-import { forwardRef, LegacyRef, ReactNode } from "react"
+import { forwardRef, LegacyRef, ReactNode, useCallback } from "react"
 import Link from "../../Link"
-import { useAppSelector } from "state/hooks"
+import { useAppDispatch, useAppSelector } from "state/hooks"
 import { selectUserSigned } from "state/userSlice"
 import pageUrls from "services/pageUrls"
 import { Category } from "models/Categorym"
+import { useUser } from "state/hooks"
+import { useRouter } from "next/router"
+import tokenManager from "services/token-manager"
+import { userIdentified } from "state/userSlice"
 
 export interface HeaderLayoutProps {
   onShowModalUploadImage: () => void
@@ -20,6 +24,15 @@ export interface HeaderLayoutProps {
 function HeaderLayout(props: HeaderLayoutProps) {
   const { onShowModalUploadImage, categories } = props
   const isSigned = useAppSelector(selectUserSigned)
+  const user = useUser()
+  const dispatch = useAppDispatch()
+  const router = useRouter()
+
+  const handleLogout = useCallback(() => {
+    tokenManager.logout()
+    dispatch(userIdentified(null))
+    router.replace(pageUrls.loginPage)
+  }, [dispatch, router])
 
   return (
     <div
@@ -57,23 +70,25 @@ function HeaderLayout(props: HeaderLayoutProps) {
                   Submit a photo
                 </button>
                 <Image
-                  src={NoUserImage}
+                  src={user?.profile?.avatar || NoUserImage}
                   width={40}
                   height={40}
-                  className="rounded-circle"
+                  className={classNames("rounded-circle", styles.hoverAvatar)}
                   objectFit={"cover"}
                   alt="avatar no user"
+                  onClick={() => router.replace(pageUrls.profile.myprofile)}
                 />
                 <Dropdown align="end">
                   <Dropdown.Toggle as={CustomToggle} />
                   <Dropdown.Menu className="mt-3">
-                    <Dropdown.Item as={Link} href={pageUrls.profile.myprofile}>Profile</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">
-                      Another action
+                    <Dropdown.Item as={Link} href={pageUrls.profile.myprofile}>
+                      Profile
                     </Dropdown.Item>
-                    <Dropdown.Item href="#/action-3">
-                      Something else
+                    <Dropdown.Item as={Link} href={pageUrls.account}>
+                      Edit profile
                     </Dropdown.Item>
+                    <Dropdown.Divider />
+                    <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
               </>
