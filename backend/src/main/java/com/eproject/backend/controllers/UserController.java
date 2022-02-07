@@ -64,16 +64,20 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe() {
-        UsernamePasswordAuthenticationToken userContext = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        UserResponse userResponse = iUserService.getUserByID(userContext.getPrincipal().toString());
-        return ResponseEntity.ok(userResponse);
+        try {
+            UsernamePasswordAuthenticationToken userContext = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+            UserResponse userResponse = iUserService.getUserByID(userContext.getPrincipal().toString());
+            return ResponseEntity.ok(userResponse);
+        }catch (Exception e){
+            return new ResponseEntity(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/update-profile")
     public ResponseEntity<?> updateProfile(@RequestBody UserProfileUpdate userProfileUpdate) {
         try {
-            UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext();
-            iUserService.updateProfileUser(userProfileUpdate, userPrinciple.getId());
+            UsernamePasswordAuthenticationToken userContext = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+            iUserService.updateProfileUser(userProfileUpdate, userContext.getPrincipal().toString());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
@@ -148,6 +152,17 @@ public class UserController {
         } catch (TokenExpiredException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse(e.getMessage()));
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePassword changePassword){
+        try {
+            UsernamePasswordAuthenticationToken userContext = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+            iUserService.changePassword(changePassword, userContext.getPrincipal().toString());
+            return ResponseEntity.ok().build();
+        }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(e.getMessage()));
         }
     }

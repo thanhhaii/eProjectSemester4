@@ -2,6 +2,7 @@ package com.eproject.backend.services;
 
 import com.eproject.backend.common.exception.EmailExistException;
 import com.eproject.backend.common.exception.UserNameExistException;
+import com.eproject.backend.dtos.users.ChangePassword;
 import com.eproject.backend.dtos.users.UserPrinciple;
 import com.eproject.backend.dtos.users.UserProfileUpdate;
 import com.eproject.backend.dtos.users.UserResponse;
@@ -12,6 +13,7 @@ import com.eproject.backend.entities.UserRoleId;
 import com.eproject.backend.repositories.RoleRepo;
 import com.eproject.backend.repositories.UserRepo;
 import com.eproject.backend.repositories.UserRoleRepo;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.RequiredArgsConstructor;
@@ -91,13 +93,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserResponse getUserByID(String userID) {
+    public UserResponse getUserByID(String userID) throws JsonProcessingException {
         User user = userRepo.findById(userID).get();
         return new UserResponse(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getProfile(),
+                user.getAbout(),
                 user.isVerifyEmail(),
                 user.getCreatedAt(),
                 user.getUpdatedAt(),
@@ -114,8 +117,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void updateProfileUser(UserProfileUpdate userProfileUpdate, String userID) throws Exception {
         try{
             ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
-            String json = objectWriter.writeValueAsString(userProfileUpdate);
-            userRepo.updateProfile(json, userID);
+            String jsonProfile = objectWriter.writeValueAsString(userProfileUpdate.getUserProfile());
+            String jsonAbout = objectWriter.writeValueAsString(userProfileUpdate.getUserAbout());
+            userRepo.updateProfile(jsonProfile, userID);
+            userRepo.updateAbout(jsonAbout, userID);
         }catch (Exception e){
             throw new Exception();
         }
@@ -138,6 +143,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = userRepo.findById(userID).get();
         user.setVerifyEmail(true);
         userRepo.save(user);
+    }
+
+    @Override
+    public void changePassword(ChangePassword changePassword, String userID) throws Exception {
+        User user = userRepo.findById(userID).get();
+        if(passwordEncoder.matches(changePassword.getCurrentPassword(), user.getPassword())){
+            user.setPassword(changePassword.getNewPassword());
+            userRepo.save(user);
+        }else {
+            throw new Exception("Password not match");
+        }
     }
 
 }

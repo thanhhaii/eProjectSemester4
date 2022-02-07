@@ -1,9 +1,11 @@
 package com.eproject.backend.services;
 
+import com.eproject.backend.dtos.users.ChangePassword;
 import com.eproject.backend.dtos.users.UserResponse;
 import com.eproject.backend.dtos.users.UserProfileUpdate;
 import com.eproject.backend.entities.Role;
 import com.eproject.backend.entities.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ public interface UserService {
 
     User getUser(String username);
 
-    UserResponse getUserByID(String userID);
+    UserResponse getUserByID(String userID) throws JsonProcessingException;
 
     List<User> getUsers();
 
@@ -28,4 +30,6 @@ public interface UserService {
     void resetPassword(String userID, String newPassword);
 
     void activeAccount(String userID);
+
+    void changePassword(ChangePassword changePassword, String userID) throws Exception;
 }

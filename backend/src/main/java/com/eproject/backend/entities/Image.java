@@ -54,12 +54,12 @@ public class Image implements java.io.Serializable {
     private Set<ImageCategory> imageCategories = new HashSet<ImageCategory>(0);
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Image(String imageUrl, String userId) {
+    public Image(String imageUrl, User user) {
         this.imageUrl = imageUrl;
-        this.user.setId(userId);
+        this.user = user;
     }
 
     public Image(String id, Date createdAt, String imageInfo, String imageUrl, boolean isPremium, Date updatedAt,

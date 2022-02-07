@@ -46,6 +46,9 @@ public class User implements java.io.Serializable {
     @Column(name = "profile")
     private String profile;
 
+    @Column(name = "about")
+    private String about;
+
     @Column(name = "verify_email", nullable = false)
     private boolean verifyEmail = false;
 
