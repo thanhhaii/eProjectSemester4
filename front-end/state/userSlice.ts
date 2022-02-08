@@ -26,6 +26,16 @@ export const selectUserSigned = createSelector(selectUserState, userState => {
   return !!userState.value
 })
 
-export const selectUser = createSelector(selectUserState, userState => userState.value)
+export const isAdminOrMod = createSelector(selectUserState, userState => {
+  return (
+    userState.value?.roles.includes("ROLE_ADMIN") ||
+    userState.value?.roles.includes("ROLE_MOD")
+  )
+})
+
+export const selectUser = createSelector(
+  selectUserState,
+  userState => userState.value,
+)
 
 export default userSlice.reducer

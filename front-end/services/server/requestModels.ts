@@ -32,3 +32,15 @@ export interface UpdateImageInfo {
   title: string
   description: string
 }
+
+export interface CategoryCreate {
+  categoryName: string
+  description: string
+}
+
+export interface CategoryUpdate {
+  id: number
+  categoryName: string
+  description: string
+  isShow: boolean
+}

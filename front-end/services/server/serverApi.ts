@@ -3,6 +3,8 @@ import { isServer } from "services/ssrutils"
 import nprogress from "nprogress"
 import {
   AddImageToCategoryRequest,
+  CategoryCreate,
+  CategoryUpdate,
   GetImagesRequest,
   LoginRequest,
   RegisterRequest,
@@ -254,6 +256,22 @@ export class ServerApi {
     imageID: string,
   ): Promise<AxiosResponse> {
     return await this._axios.put(`/images/update-info/${imageID}`, values, {
+      validateStatus: (status: number) => status === 200,
+    })
+  }
+
+  public async createCategory(
+    categoryCreate: CategoryCreate,
+  ): Promise<AxiosResponse> {
+    return await this._axios.post("/categories", categoryCreate, {
+      validateStatus: (status: number) => status === 201,
+    })
+  }
+
+  public async updateCategory(
+    categoryUpdate: CategoryUpdate,
+  ): Promise<AxiosResponse> {
+    return await this._axios.put("/categories", categoryUpdate, {
       validateStatus: (status: number) => status === 200,
     })
   }

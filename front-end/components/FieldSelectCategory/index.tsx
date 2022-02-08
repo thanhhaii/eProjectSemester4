@@ -28,16 +28,18 @@ const FieldSelectCategory = (props: FieldSelectCategoryProps) => {
 
     const value = defaultValues()
     setCategoriesSelected([...categoriesSelected, ...value])
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const options = useMemo(() => {
-    return categories.map(category => {
-      return {
-        label: category.categoryName,
-        value: category,
-      } as SelecteCategoryProps
-    })
+    return categories
+      .filter(i => i.isShow)
+      .map(category => {
+        return {
+          label: category.categoryName,
+          value: category,
+        } as SelecteCategoryProps
+      })
   }, [categories])
 
   const handleInputChange = useCallback(
