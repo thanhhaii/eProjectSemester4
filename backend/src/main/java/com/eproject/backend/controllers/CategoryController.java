@@ -39,7 +39,6 @@ public class CategoryController {
     }
 
     @PostMapping("")
-
     public ResponseEntity<?> createCategory(@RequestBody CategoryCreate categoryCreate) {
         try {
             Category category = new Category(categoryCreate.getCategoryName(), categoryCreate.getDescription());
@@ -53,7 +52,7 @@ public class CategoryController {
     @PutMapping("")
     public ResponseEntity<?> updateCategory(@RequestBody CategoryUpdate categoryUpdate) {
         try {
-            Category category = new Category(categoryUpdate.getId(), categoryUpdate.getCategoryName(), categoryUpdate.getDescription());
+            Category category = new Category(categoryUpdate.getId(), categoryUpdate.getCategoryName(), categoryUpdate.getDescription(), categoryUpdate.getIsShow());
             Category response = categoryService.updateCategory(category);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {

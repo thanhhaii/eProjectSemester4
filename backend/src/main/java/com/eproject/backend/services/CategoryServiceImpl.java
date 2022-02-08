@@ -29,7 +29,8 @@ public class CategoryServiceImpl implements CategoryService{
                     category.getCategoryName(),
                     category.getDescription(),
                     category.getCreatedAt(),
-                    category.getUpdatedAt()
+                    category.getUpdatedAt(),
+                    category.getIsShow() == 1
             ));
         });
         return responses;

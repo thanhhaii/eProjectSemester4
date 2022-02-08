@@ -16,5 +16,6 @@ public class CategoryResponse {
     private String description;
     private Date createdAt;
     private Date updatedAt;
+    private Boolean isShow;
 
 }

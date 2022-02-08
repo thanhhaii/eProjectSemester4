@@ -51,6 +51,10 @@ public class Category implements java.io.Serializable {
     @Column(name = "updated_at", nullable = false, length = 10)
     private Date updatedAt = new Date();
 
+    @Column(name = "is_show", nullable = false)
+    private Integer isShow = 1;
+
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
     private Set<ImageCategory> imageCategories = new HashSet<ImageCategory>(0);
 
@@ -71,9 +75,10 @@ public class Category implements java.io.Serializable {
         this.imageCategories = imageCategories;
     }
 
-    public Category(Integer id, String categoryName, String description) {
+    public Category(Integer id, String categoryName, String description, Boolean isShow) {
         this.id = id;
         this.categoryName = categoryName;
         this.description = description;
+        this.isShow = isShow ? 1 : 0;
     }
 }

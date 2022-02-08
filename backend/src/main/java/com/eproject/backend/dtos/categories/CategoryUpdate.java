@@ -15,4 +15,6 @@ public class CategoryUpdate {
 
     private String description;
 
+    private Boolean isShow;
+
 }
