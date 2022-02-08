@@ -4,8 +4,13 @@ import styles from "./ModalShowImage.module.scss"
 import Image from "next/image"
 import classNames from "classnames"
 import NoUserImage from "public/images/noUser.png"
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { IconCalendarTime, IconInfoSquare, IconAlignJustified } from "@tabler/icons"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import {
+  IconCalendarTime,
+  IconInfoSquare,
+  IconAlignJustified,
+  IconHeart,
+} from "@tabler/icons"
 import fileDownload from "js-file-download"
 import { Format } from "services/timeutil"
 import Masonry from "react-masonry-css"
@@ -22,6 +27,9 @@ export interface ModalShowImageProps {
   onGetImageRelated: (category: string) => Promise<ImageItem[]>
   user: User | null
   handleUpdateImage: (values: UpdateImageInfo, imageId: string) => Promise<void>
+  onCheckExistInCollection?: (imageID: string) => Promise<boolean>
+  onAddImageToCollection: (imageID: string) => Promise<void>
+  onRemoveImageFromCollection: (imageID: string) => Promise<void>
 }
 
 const ModalShowImage = (props: ModalShowImageProps) => {
@@ -32,38 +40,89 @@ const ModalShowImage = (props: ModalShowImageProps) => {
     onGetImageRelated,
     user,
     handleUpdateImage,
+    onCheckExistInCollection,
+    onAddImageToCollection,
+    onRemoveImageFromCollection,
   } = props
+  const [imageItemTarget, setImageItemTarget] = useState<ImageItem>()
   const [imageRelated, setImageRelated] = useState<ImageItem[]>([])
   const [isEditMenu, setEditMenu] = useState<boolean>(false)
+  const [isExistCollection, setExistCollection] = useState<boolean>(false)
   const categories = useCategory()
 
   useEffect(() => {
-    if (!imageItem || imageItem.categories.length === 0) {
+    setImageItemTarget(imageItem)
+  }, [imageItem])
+
+  useEffect(() => {
+    if (!imageItemTarget || imageItemTarget.categories.length === 0) {
       return
     }
 
     ;(async () => {
-      const resp = await onGetImageRelated(imageItem.categories[0])
-      setImageRelated(resp.filter(image => image.id !== imageItem.id))
+      const resp = await onGetImageRelated(imageItemTarget.categories[0])
+      setImageRelated(resp.filter(image => image.id !== imageItemTarget.id))
     })()
-  }, [imageItem, onGetImageRelated])
+  }, [imageItemTarget, onGetImageRelated])
+
+  useEffect(() => {
+    if (!imageItemTarget) {
+      return
+    }
+    console.log("a")
+    ;(async () => {
+      if (user && onCheckExistInCollection) {
+        setExistCollection(await onCheckExistInCollection(imageItemTarget.id))
+      }
+    })()
+  }, [onCheckExistInCollection, imageItemTarget, user])
 
   const handleDownloadImage = useCallback(() => {
-    if (!imageItem) {
+    if (!imageItemTarget) {
       return
     }
 
-    fileDownload(imageItem.imageUrl, "image")
-  }, [imageItem])
+    fileDownload(imageItemTarget.imageUrl, "image")
+  }, [imageItemTarget])
 
   const nameOwner = useMemo(() => {
-    if (imageItem?.userInfo.firstName || imageItem?.userInfo.lastName) {
-      return `${imageItem?.userInfo.firstName} ${imageItem?.userInfo.lastName}`
+    if (
+      imageItemTarget?.userInfo.firstName ||
+      imageItemTarget?.userInfo.lastName
+    ) {
+      return `${imageItemTarget?.userInfo.firstName} ${imageItemTarget?.userInfo.lastName}`
     }
-    return imageItem?.username
-  }, [imageItem])
+    return imageItemTarget?.username
+  }, [imageItemTarget])
 
-  if (!imageItem) {
+  const handleToggleImageCollection = useCallback(async () => {
+    if (!imageItemTarget) {
+      return
+    }
+    console.log(imageItemTarget.id)
+    if (isExistCollection) {
+      await onRemoveImageFromCollection(imageItemTarget.id)
+    } else {
+      await onAddImageToCollection(imageItemTarget.id)
+    }
+    setExistCollection(state => !state)
+  }, [
+    imageItemTarget,
+    isExistCollection,
+    onAddImageToCollection,
+    onRemoveImageFromCollection,
+  ])
+
+  const handleSelectImageRelated = useCallback((item: ImageItem) => {
+    setImageItemTarget(item)
+    document.getElementsByClassName("fade modal show")[0].scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    })
+  }, [])
+
+  if (!imageItemTarget) {
     return <></>
   }
 
@@ -79,7 +138,7 @@ const ModalShowImage = (props: ModalShowImageProps) => {
           <div className="d-flex align-items-center justify-content-between mb-3">
             <div className="d-flex align-items-center">
               <Image
-                src={imageItem.userInfo.avatar || NoUserImage}
+                src={imageItemTarget.userInfo.avatar || NoUserImage}
                 width={30}
                 height={30}
                 className="rounded-circle"
@@ -89,6 +148,18 @@ const ModalShowImage = (props: ModalShowImageProps) => {
               <p className="mb-0 ms-2">{nameOwner}</p>
             </div>
             <div>
+              {user && (
+                <button
+                  type="button"
+                  onClick={handleToggleImageCollection}
+                  className="btn btn-light btn-sm border me-2">
+                  {isExistCollection ? (
+                    <IconHeart size="16" stroke="0" fill="red" />
+                  ) : (
+                    <IconHeart size="16" stroke="1.5" />
+                  )}
+                </button>
+              )}
               <button
                 type="button"
                 className="btn btn-light btn-sm border"
@@ -101,7 +172,7 @@ const ModalShowImage = (props: ModalShowImageProps) => {
             <div className={styles.boxImageModal}>
               <Image
                 alt="image upload"
-                src={imageItem.imageUrl}
+                src={imageItemTarget.imageUrl}
                 layout="fill"
                 objectFit="contain"
               />
@@ -112,7 +183,7 @@ const ModalShowImage = (props: ModalShowImageProps) => {
               <div className="my-3">
                 <div className="mb-2">
                   <p className="small mb-0">Category</p>
-                  {imageItem.categories.map(category => {
+                  {imageItemTarget.categories.map(category => {
                     return (
                       <span key={category} className="small fw-bold">
                         {category}
@@ -125,22 +196,25 @@ const ModalShowImage = (props: ModalShowImageProps) => {
                     <IconCalendarTime size="16" stroke={1} />
                     <p className="mb-0 small ms-2">
                       Publish on{" "}
-                      {Format(new Date(imageItem.createdAt), "LLL dd, yyyy")}
+                      {Format(
+                        new Date(imageItemTarget.createdAt),
+                        "LLL dd, yyyy",
+                      )}
                     </p>
                   </li>
-                  {imageItem.imageInfo?.title && (
+                  {imageItemTarget.imageInfo?.title && (
                     <li className="mt-1">
                       <IconInfoSquare size="16" stroke={1} />
                       <p className="small mb-0 ms-2">
-                        Title: {imageItem.imageInfo?.title}
+                        Title: {imageItemTarget.imageInfo?.title}
                       </p>
                     </li>
                   )}
-                  {imageItem.imageInfo?.description && (
+                  {imageItemTarget.imageInfo?.description && (
                     <li className="mt-1">
                       <IconAlignJustified size="16" stroke={1} />
                       <p className="small mb-0 ms-2">
-                        Description: {imageItem.imageInfo?.description}
+                        Description: {imageItemTarget.imageInfo?.description}
                       </p>
                     </li>
                   )}
@@ -149,7 +223,7 @@ const ModalShowImage = (props: ModalShowImageProps) => {
             </div>
             <div className="col-4">
               <div className="text-end mt-3">
-                {user && user.id === imageItem.userID && (
+                {user && user.id === imageItemTarget.userID && (
                   <button
                     className="btn btn-light btn-sm border"
                     type="button"
@@ -173,7 +247,7 @@ const ModalShowImage = (props: ModalShowImageProps) => {
                   <ImageRenderItem
                     imageItem={item}
                     key={item.id}
-                    onSelectShowImage={() => {}}
+                    onSelectShowImage={() => handleSelectImageRelated(item)}
                   />
                 )
               })}
@@ -181,11 +255,11 @@ const ModalShowImage = (props: ModalShowImageProps) => {
           </div>
         </Modal.Body>
       </Modal>
-      {user && user.id === imageItem.userID && (
+      {user && user.id === imageItemTarget.userID && (
         <ModalUpdateImage
           show={isEditMenu}
           onHide={() => setEditMenu(false)}
-          imageItem={imageItem}
+          imageItem={imageItemTarget}
           categories={categories}
           onUpdateImage={handleUpdateImage}
         />

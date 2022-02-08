@@ -2,8 +2,12 @@ package com.eproject.backend.entities;
 // Generated Jan 3, 2022, 8:04:04 PM by Hibernate Tools 5.1.10.Final
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -15,7 +19,8 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "collection", catalog = "photoshare")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Collection implements java.io.Serializable {
 
@@ -33,9 +38,10 @@ public class Collection implements java.io.Serializable {
 	@JoinColumn(name = "owner_id", nullable = false)
 	private User user;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
+	@CreatedDate
 	@Column(name = "created_at", nullable = false, length = 10)
-	private Date createdAt;
+	private Date createdAt = new Date();
 
 	@Column(name = "description", nullable = false, columnDefinition = "TEXT")
 	private String description;
@@ -46,12 +52,20 @@ public class Collection implements java.io.Serializable {
 	@Column(name = "status", nullable = false, length = 15)
 	private String status;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "updated_at", nullable = false, length = 10)
-	private Date updatedAt;
+	@LastModifiedDate
+	private Date updatedAt = new Date();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "collection")
-	private Set<CollectionItem> collectionItems = new HashSet<CollectionItem>(0);
+	private Set<ImageCollection> imageCollections = new HashSet<ImageCollection>(0);
+
+	public Collection(String userID) {
+		this.user = new User(userID);
+		this.description = "collection";
+		this.name = "collection";
+		this.status = "show";
+	}
 
 	public Collection(String id, User user, Date createdAt, String description, String name, String status,
 			Date updatedAt) {
@@ -62,18 +76,6 @@ public class Collection implements java.io.Serializable {
 		this.name = name;
 		this.status = status;
 		this.updatedAt = updatedAt;
-	}
-
-	public Collection(String id, User user, Date createdAt, String description, String name, String status,
-			Date updatedAt, Set<CollectionItem> collectionItems) {
-		this.id = id;
-		this.user = user;
-		this.createdAt = createdAt;
-		this.description = description;
-		this.name = name;
-		this.status = status;
-		this.updatedAt = updatedAt;
-		this.collectionItems = collectionItems;
 	}
 
 }

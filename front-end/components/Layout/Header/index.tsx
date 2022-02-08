@@ -116,8 +116,19 @@ function HeaderLayout(props: HeaderLayoutProps) {
       <div className={classNames("col-11", styles.bottomHeader)}>
         <div className="row align-items-center h-100">
           <div className={classNames("col-auto", styles.mainCategory)}>
-            <Link href={pageUrls.home} className="text-black">
+            <Link
+              href={pageUrls.home}
+              className={classNames(styles.linkDefault, {
+                "text-dark": router.pathname === pageUrls.home,
+              })}>
               Editorial
+            </Link>
+            <Link
+              href={pageUrls.collection}
+              className={classNames("ms-2", styles.linkDefault, {
+                "text-dark": router.pathname === pageUrls.collection,
+              })}>
+              Favorite
             </Link>
           </div>
           <div className="col">
@@ -128,6 +139,10 @@ function HeaderLayout(props: HeaderLayoutProps) {
                   return (
                     <li key={category.id}>
                       <Link
+                        className={classNames({
+                          "text-dark":
+                            router.query.categoryName === category.categoryName,
+                        })}
                         href={pageUrls.listImageCategory(
                           category.categoryName,
                         )}>

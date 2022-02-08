@@ -85,6 +85,14 @@
   }
 }
 
+.linkDefault {
+  color: rgba($color: gray, $alpha: 0.8);
+
+  &:hover {
+    color: black;
+  }
+}
+
 .modalUpload {
   height: 80vh;
   cursor: pointer;

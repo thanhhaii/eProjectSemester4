@@ -40,7 +40,7 @@ public class UserRole implements java.io.Serializable {
 	@JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
 	private User user;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", nullable = false, length = 10)
 	private Date createdAt;
 

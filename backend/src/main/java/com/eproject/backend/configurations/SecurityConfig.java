@@ -62,6 +62,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(PUT, "images/update-info/{id}")
                 .hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_MOD.toString(), ERole.ROLE_ADMIN.toString());
 
+        http.authorizeRequests().antMatchers("/collections")
+                .hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())
+                .antMatchers("/collections**")
+                .hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString());
+
         http.authorizeRequests().anyRequest().authenticated();
 
         http.addFilter(customAuthenticationFilter);
