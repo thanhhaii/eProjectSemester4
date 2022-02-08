@@ -52,12 +52,12 @@ public class User implements java.io.Serializable {
     @Column(name = "verify_email", nullable = false)
     private boolean verifyEmail = false;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private Date createdAt = new Date();
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     @Column(name = "updated_at")
     private Date updatedAt = new Date();
@@ -78,6 +78,10 @@ public class User implements java.io.Serializable {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public User(String userID){
+        this.id = userID;
     }
 
     public User(String username, String email, String password, String profile, boolean verifyEmail) {

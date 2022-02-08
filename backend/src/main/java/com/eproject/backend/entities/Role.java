@@ -56,7 +56,7 @@ public class Role implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", nullable = false, length = 10)
 	public Date getCreatedAt() {
 		return this.createdAt;
@@ -75,7 +75,7 @@ public class Role implements java.io.Serializable {
 		this.name = name;
 	}
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "updated_ad", nullable = false, length = 10)
 	public Date getUpdatedAd() {
 		return this.updatedAd;

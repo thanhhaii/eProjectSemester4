@@ -29,11 +29,11 @@ public class Token implements java.io.Serializable {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "expire_at", nullable = false, length = 10)
 	private Date expireAt;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "issued_at", nullable = false, length = 10)
 	private Date issuedAt = new Date();
 

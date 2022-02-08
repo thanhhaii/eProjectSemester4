@@ -31,7 +31,7 @@ public class Image implements java.io.Serializable {
     )
     private String id;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
     @Column(name = "created_at", nullable = false, length = 10)
     private Date createdAt = new Date();
@@ -45,13 +45,16 @@ public class Image implements java.io.Serializable {
     @Column(name = "is_premium", nullable = false)
     private boolean isPremium = false;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false, length = 10)
     private Date updatedAt = new Date();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "image")
     private Set<ImageCategory> imageCategories = new HashSet<ImageCategory>(0);
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "image")
+    private Set<ImageCollection> imageCollections = new HashSet<ImageCollection>(0);
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
