@@ -90,14 +90,6 @@ const HomePageContainer = (props: HomePageContainerProps) => {
     setShowImage(true)
   }, [])
 
-  const handleGetImageRelated = useCallback(
-    async (category: string): Promise<ImageItem[]> => {
-      const resp = await serverApi.getImages({ filterValue: category })
-      return resp || []
-    },
-    [],
-  )
-
   const handleUpdateImage = useCallback(
     async (values: UpdateImageInfo, imageId: string) => {
       await serverApi.updateImageInfo(
@@ -111,6 +103,35 @@ const HomePageContainer = (props: HomePageContainerProps) => {
       refetch()
     },
     [refetch],
+  )
+
+  const handleGetImageRelated = useCallback(
+    async (category: string): Promise<ImageItem[]> => {
+      const resp = await serverApi.getImages({
+        filterType: "category",
+        filterValue: category,
+      })
+      return resp || []
+    },
+    [],
+  )
+
+  const handleAddImageToCollection = useCallback(async (imageID: string) => {
+    await serverApi.addImageToCollection(imageID)
+  }, [])
+
+  const handleRemoveImageFromCollection = useCallback(
+    async (imageID: string) => {
+      await serverApi.removeImageFromCollection(imageID)
+    },
+    [],
+  )
+
+  const handleCheckExistCollection = useCallback(
+    async (imageID: string): Promise<boolean> => {
+      return await serverApi.checkImageExistCollection(imageID)
+    },
+    [],
   )
 
   return (
@@ -142,6 +163,9 @@ const HomePageContainer = (props: HomePageContainerProps) => {
         </Masonry>
       </div>
       <ModalShowImage
+        onCheckExistInCollection={handleCheckExistCollection}
+        onAddImageToCollection={handleAddImageToCollection}
+        onRemoveImageFromCollection={handleRemoveImageFromCollection}
         handleUpdateImage={handleUpdateImage}
         user={user}
         show={isShowImage}

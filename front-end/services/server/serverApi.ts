@@ -275,4 +275,45 @@ export class ServerApi {
       validateStatus: (status: number) => status === 200,
     })
   }
+
+  public async getImageCollection(): Promise<ImageItem[]> {
+    const response = await this._axios.get("/collections", {
+      validateStatus: (status: number) => status === 200,
+    })
+    return response.data
+  }
+
+  public async checkImageExistCollection(imageID: string): Promise<boolean> {
+    const resp = await this._axios.get(
+      `/collections/is-exist-collection/${imageID}`,
+      {
+        validateStatus: (status: number) => status === 200,
+      },
+    )
+
+    return resp.data
+  }
+
+  public async addImageToCollection(imageID: string): Promise<AxiosResponse> {
+    console.log(imageID)
+    const response = await this._axios.post(
+      "/collections",
+      {
+        imageID,
+      },
+      {
+        validateStatus: (status: number) => status === 200,
+      },
+    )
+    return response
+  }
+
+  public async removeImageFromCollection(
+    imageID: string,
+  ): Promise<AxiosResponse> {
+    const response = await this._axios.delete(`/collections/${imageID}`, {
+      validateStatus: (status: number) => status === 200,
+    })
+    return response
+  }
 }

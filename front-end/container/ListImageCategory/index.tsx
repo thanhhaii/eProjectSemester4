@@ -110,7 +110,7 @@ const ListImageCategoryContainer = (props: ListImageCategoryContainerProps) => {
         setCategory(category)
       }
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router])
 
   const handleSelectShowImage = useCallback((imageItem: ImageItem) => {
@@ -144,6 +144,24 @@ const ListImageCategoryContainer = (props: ListImageCategoryContainerProps) => {
     [refetch],
   )
 
+  const handleAddImageToCollection = useCallback(async (imageID: string) => {
+    await serverApi.addImageToCollection(imageID)
+  }, [])
+
+  const handleRemoveImageFromCollection = useCallback(
+    async (imageID: string) => {
+      await serverApi.removeImageFromCollection(imageID)
+    },
+    [],
+  )
+
+  const handleCheckExistCollection = useCallback(
+    async (imageID: string): Promise<boolean> => {
+      return await serverApi.checkImageExistCollection(imageID)
+    },
+    [],
+  )
+
   return (
     <div className="container pt-5">
       <div className="row ">
@@ -169,6 +187,9 @@ const ListImageCategoryContainer = (props: ListImageCategoryContainerProps) => {
         </div>
       </div>
       <ModalShowImage
+        onCheckExistInCollection={handleCheckExistCollection}
+        onAddImageToCollection={handleAddImageToCollection}
+        onRemoveImageFromCollection={handleRemoveImageFromCollection}
         handleUpdateImage={handleUpdateImage}
         user={user}
         show={isShowImage}

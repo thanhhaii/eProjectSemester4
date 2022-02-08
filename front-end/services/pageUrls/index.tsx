@@ -14,6 +14,7 @@ const pageUrls = {
   manage: {
     category: "/manage/category",
   },
+  collection: "/collection"
 }
 
 export default pageUrls
