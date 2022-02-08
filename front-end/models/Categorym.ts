@@ -1,5 +1,6 @@
 export interface Category {
   id: number
+  isShow: boolean
   categoryName: string
   description?: string
   createdAt?: string

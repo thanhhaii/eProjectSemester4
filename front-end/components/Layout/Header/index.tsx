@@ -7,7 +7,7 @@ import Dropdown from "react-bootstrap/Dropdown"
 import { forwardRef, LegacyRef, ReactNode, useCallback } from "react"
 import Link from "../../Link"
 import { useAppDispatch, useAppSelector } from "state/hooks"
-import { selectUserSigned } from "state/userSlice"
+import { isAdminOrMod, selectUserSigned } from "state/userSlice"
 import pageUrls from "services/pageUrls"
 import { Category } from "models/Categorym"
 import { useUser } from "state/hooks"
@@ -27,6 +27,7 @@ function HeaderLayout(props: HeaderLayoutProps) {
   const user = useUser()
   const dispatch = useAppDispatch()
   const router = useRouter()
+  const isManage = useAppSelector(isAdminOrMod)
 
   const handleLogout = useCallback(() => {
     tokenManager.logout()
@@ -87,6 +88,11 @@ function HeaderLayout(props: HeaderLayoutProps) {
                     <Dropdown.Item as={Link} href={pageUrls.account}>
                       Edit profile
                     </Dropdown.Item>
+                    {isManage && (
+                      <Dropdown.Item as={Link} href={pageUrls.manage.category}>
+                        Manage category
+                      </Dropdown.Item>
+                    )}
                     <Dropdown.Divider />
                     <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                   </Dropdown.Menu>
@@ -116,16 +122,20 @@ function HeaderLayout(props: HeaderLayoutProps) {
           </div>
           <div className="col">
             <ul className={styles.listCategory}>
-              {categories.map(category => {
-                return (
-                  <li key={category.id}>
-                    <Link
-                      href={pageUrls.listImageCategory(category.categoryName)}>
-                      {category.categoryName}
-                    </Link>
-                  </li>
-                )
-              })}
+              {categories
+                .filter(category => category.isShow)
+                .map(category => {
+                  return (
+                    <li key={category.id}>
+                      <Link
+                        href={pageUrls.listImageCategory(
+                          category.categoryName,
+                        )}>
+                        {category.categoryName}
+                      </Link>
+                    </li>
+                  )
+                })}
             </ul>
           </div>
         </div>

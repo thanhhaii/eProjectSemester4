@@ -11,6 +11,9 @@ const pageUrls = {
   },
   account: "/account",
   changePassword: "/account/change-password",
+  manage: {
+    category: "/manage/category",
+  },
 }
 
 export default pageUrls
