@@ -17,7 +17,7 @@ const ModalShowImage = dynamic(() => import("components/ModalShowImage"), {
 
 export interface ListImageCategoryContainerProps {}
 
-const PAGE_SIZE = 20
+const PAGE_SIZE = 50
 
 type QueryKey = [
   string,
@@ -54,11 +54,11 @@ const ListImageCategoryContainer = (props: ListImageCategoryContainerProps) => {
   const {
     data,
     refetch,
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
-    status,
+    // fetchNextPage,
+    // hasNextPage,
+    // isFetching,
+    // isFetchingNextPage,
+    // status,
   } = useInfiniteQuery(
     [
       "images",
@@ -96,10 +96,10 @@ const ListImageCategoryContainer = (props: ListImageCategoryContainerProps) => {
       return
     }
     if (
-      categoryName === "" ||
       !categories.some(
         category =>
-          category.categoryName.toLowerCase() === categoryName.toLowerCase(),
+          category.categoryName.toLowerCase() === categoryName.toLowerCase() &&
+          category.isShow,
       )
     ) {
       router.replace(pageUrls.notFound)

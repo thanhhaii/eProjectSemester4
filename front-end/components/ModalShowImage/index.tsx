@@ -4,7 +4,7 @@ import styles from "./ModalShowImage.module.scss"
 import Image from "next/image"
 import classNames from "classnames"
 import NoUserImage from "public/images/noUser.png"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import {
   IconCalendarTime,
   IconInfoSquare,
@@ -69,7 +69,6 @@ const ModalShowImage = (props: ModalShowImageProps) => {
     if (!imageItemTarget) {
       return
     }
-    console.log("a")
     ;(async () => {
       if (user && onCheckExistInCollection) {
         setExistCollection(await onCheckExistInCollection(imageItemTarget.id))
@@ -87,8 +86,8 @@ const ModalShowImage = (props: ModalShowImageProps) => {
 
   const nameOwner = useMemo(() => {
     if (
-      imageItemTarget?.userInfo.firstName ||
-      imageItemTarget?.userInfo.lastName
+      imageItemTarget?.userInfo?.firstName ||
+      imageItemTarget?.userInfo?.lastName
     ) {
       return `${imageItemTarget?.userInfo.firstName} ${imageItemTarget?.userInfo.lastName}`
     }
@@ -99,7 +98,6 @@ const ModalShowImage = (props: ModalShowImageProps) => {
     if (!imageItemTarget) {
       return
     }
-    console.log(imageItemTarget.id)
     if (isExistCollection) {
       await onRemoveImageFromCollection(imageItemTarget.id)
     } else {
@@ -138,7 +136,7 @@ const ModalShowImage = (props: ModalShowImageProps) => {
           <div className="d-flex align-items-center justify-content-between mb-3">
             <div className="d-flex align-items-center">
               <Image
-                src={imageItemTarget.userInfo.avatar || NoUserImage}
+                src={imageItemTarget.userInfo?.avatar || NoUserImage}
                 width={30}
                 height={30}
                 className="rounded-circle"
@@ -152,9 +150,15 @@ const ModalShowImage = (props: ModalShowImageProps) => {
                 <button
                   type="button"
                   onClick={handleToggleImageCollection}
-                  className="btn btn-light btn-sm border me-2">
+                  className={classNames(
+                    "btn btn-sm border me-2 shadow-none px-2",
+                    {
+                      "btn-light": !isExistCollection,
+                      "btn-danger": isExistCollection,
+                    },
+                  )}>
                   {isExistCollection ? (
-                    <IconHeart size="16" stroke="0" fill="red" />
+                    <IconHeart size="16" stroke="0" fill="white" />
                   ) : (
                     <IconHeart size="16" stroke="1.5" />
                   )}
@@ -162,7 +166,7 @@ const ModalShowImage = (props: ModalShowImageProps) => {
               )}
               <button
                 type="button"
-                className="btn btn-light btn-sm border"
+                className="btn btn-light btn-sm border shadow-none"
                 onClick={handleDownloadImage}>
                 Download
               </button>
@@ -183,10 +187,10 @@ const ModalShowImage = (props: ModalShowImageProps) => {
               <div className="my-3">
                 <div className="mb-2">
                   <p className="small mb-0">Category</p>
-                  {imageItemTarget.categories.map(category => {
+                  {imageItemTarget.categories.map((category, index) => {
                     return (
                       <span key={category} className="small fw-bold">
-                        {category}
+                        {category}{index + 1 === imageItemTarget.categories.length ? "" : ", "}
                       </span>
                     )
                   })}

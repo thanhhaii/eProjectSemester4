@@ -99,4 +99,19 @@ public class ImageController{
         }
     }
 
+    @GetMapping("/my-image")
+    public ResponseEntity<?> getMyImage(){
+        try{
+            UsernamePasswordAuthenticationToken userContext = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+            List<GetListImageResponse> getListImageResponseList = new ArrayList<>();
+            for(Image image: imageService.getMyImage(userContext.getPrincipal().toString())){
+                getListImageResponseList.add(new GetListImageResponse(image));
+            }
+            return ResponseEntity.ok(getListImageResponseList);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+
 }

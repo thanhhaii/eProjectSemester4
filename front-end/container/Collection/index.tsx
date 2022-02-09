@@ -6,6 +6,7 @@ import ImageRenderItem from "components/ImageItemRender"
 import ModalShowImage from "components/ModalShowImage"
 import { UpdateImageInfo } from "models/FormValuem"
 import { useUser } from "state/hooks"
+import { useQuery } from "react-query"
 
 export interface CollectionContainerProps {}
 
@@ -15,11 +16,16 @@ const CollectionContainer = (props: CollectionContainerProps) => {
   const [imageTarget, setImageTarget] = useState<ImageItem | undefined>()
   const user = useUser()
 
+  const { data, refetch } = useQuery("collection", async () => {
+    return await serverApi.getImageCollection()
+  })
+
   useEffect(() => {
-    ;(async () => {
-      setImageCollection(await serverApi.getImageCollection())
-    })()
-  }, [])
+    if (!data) {
+      return
+    }
+    setImageCollection(data)
+  }, [data])
 
   const handleSelectShowImage = useCallback((imageItem: ImageItem) => {
     setImageTarget(imageItem)
@@ -58,15 +64,20 @@ const CollectionContainer = (props: CollectionContainerProps) => {
     [],
   )
 
-  const handleAddImageToCollection = useCallback(async (imageID: string) => {
-    await serverApi.addImageToCollection(imageID)
-  }, [])
+  const handleAddImageToCollection = useCallback(
+    async (imageID: string) => {
+      await serverApi.addImageToCollection(imageID)
+      refetch()
+    },
+    [refetch],
+  )
 
   const handleRemoveImageFromCollection = useCallback(
     async (imageID: string) => {
       await serverApi.removeImageFromCollection(imageID)
+      refetch()
     },
-    [],
+    [refetch],
   )
 
   return (

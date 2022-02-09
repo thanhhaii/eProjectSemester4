@@ -99,4 +99,9 @@ public class ImageServiceImpl implements ImageService {
         }
         return imageRepository.getList(requestPagination.getStart(), requestPagination.getLimit());
     }
+
+    @Override
+    public List<Image> getMyImage(String userID) {
+        return imageRepository.getMyImage(userID);
+    }
 }

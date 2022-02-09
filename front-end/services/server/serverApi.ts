@@ -316,4 +316,11 @@ export class ServerApi {
     })
     return response
   }
+
+  public async myImage(): Promise<ImageItem[]> {
+    const resp = await this._axios.get("/images/my-image", {
+      validateStatus: (status: number) => status === 200,
+    })
+    return resp.data
+  }
 }

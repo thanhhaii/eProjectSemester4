@@ -7,8 +7,8 @@ const validation = (): yup.ObjectSchema<any> =>
         title: yup
           .string()
           .min(5, "Must be at least 5 characters")
-          .max(50)
-          .required("Title is required"),
+          .max(50),
+          // .required("Title is required"),
         description: yup.string().min(10).max(200),
       }),
     ),

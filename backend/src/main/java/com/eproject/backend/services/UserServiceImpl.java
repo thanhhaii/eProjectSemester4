@@ -6,10 +6,7 @@ import com.eproject.backend.dtos.users.ChangePassword;
 import com.eproject.backend.dtos.users.UserPrinciple;
 import com.eproject.backend.dtos.users.UserProfileUpdate;
 import com.eproject.backend.dtos.users.UserResponse;
-import com.eproject.backend.entities.Role;
-import com.eproject.backend.entities.User;
-import com.eproject.backend.entities.UserRole;
-import com.eproject.backend.entities.UserRoleId;
+import com.eproject.backend.entities.*;
 import com.eproject.backend.repositories.RoleRepo;
 import com.eproject.backend.repositories.UserRepo;
 import com.eproject.backend.repositories.UserRoleRepo;
@@ -26,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.Collection;
 
 @Service
 @Transactional
@@ -155,5 +153,4 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new Exception("Password not match");
         }
     }
-
 }

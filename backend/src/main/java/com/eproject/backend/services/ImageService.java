@@ -23,4 +23,6 @@ public interface ImageService {
     void updateImageInfo(ImageUpdateInfo ImageUpdateInfo, String imageID) throws JsonProcessingException;
 
     List<Image> getListImage(RequestPagination requestPagination);
+
+    List<Image> getMyImage(String userID);
 }

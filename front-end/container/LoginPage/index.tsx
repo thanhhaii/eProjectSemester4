@@ -1,4 +1,9 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react"
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import FormUserLayout from "components/Layout/FormUser/FormUserLayout"
 import { Formik, Field, Form, ErrorMessage } from "formik"
 import { LoginFormProps } from "models/FormValuem"
@@ -12,9 +17,7 @@ import { useRouter } from "next/router"
 import tokenManager from "services/token-manager"
 import { userIdentified } from "../../state/userSlice"
 
-export interface LoginContainerProps {
-
-}
+export interface LoginContainerProps {}
 
 const initialValue: LoginFormProps = {
   username: "",
@@ -53,27 +56,29 @@ function LoginContainer(props: LoginContainerProps) {
     } else {
       router.replace(pageUrls.home)
     }
-
   }, [router, user])
 
-  const handleSubmit = useCallback(async (values: LoginFormProps) => {
-    try {
-      setLoading(true)
-      setFailed(false)
-      const tokenInfo = await serverApi.login(values)
-      if (tokenInfo) {
-        await tokenManager.setToken(tokenInfo)
-        const user = await serverApi.getMe()
-        dispatch(userIdentified(user))
-        await router.replace(pageUrls.home)
-      } else {
-        setFailed(true)
+  const handleSubmit = useCallback(
+    async (values: LoginFormProps) => {
+      try {
+        setLoading(true)
+        setFailed(false)
+        const tokenInfo = await serverApi.login(values)
+        if (tokenInfo) {
+          await tokenManager.setToken(tokenInfo)
+          const user = await serverApi.getMe()
+          dispatch(userIdentified(user))
+          await router.replace(pageUrls.home)
+        } else {
+          setFailed(true)
+        }
+        setLoading(false)
+      } catch (e) {
+        setLoading(false)
       }
-      setLoading(false)
-    } catch (e) {
-      setLoading(false)
-    }
-  }, [])
+    },
+    [dispatch, router],
+  )
 
   return (
     <FormUserLayout>
@@ -87,15 +92,28 @@ function LoginContainer(props: LoginContainerProps) {
               <div className="col-8">
                 <div className="row">
                   <div className="col-12">
+                    <Link
+                      className="small pb-5 d-inline-block"
+                      href={pageUrls.home}>
+                      Home
+                    </Link>
                     <h1>Login</h1>
-                    <p className="gray-600">Share your beautiful pictures with everyone</p>
+                    <p className="gray-600">
+                      Share your beautiful pictures with everyone
+                    </p>
                     <hr className="my-3" />
                   </div>
                   <div className="col-12">
-                    {isFailed && <p className="text-danger mb-0">Login fail, please try again</p>}
+                    {isFailed && (
+                      <p className="text-danger mb-0">
+                        Login fail, please try again
+                      </p>
+                    )}
                   </div>
                   <div className="col-12 mb-3">
-                    <label htmlFor="username" className="form-label">Username</label>
+                    <label htmlFor="username" className="form-label">
+                      Username
+                    </label>
                     <Field
                       type="text"
                       className="form-control fw-light"
@@ -108,7 +126,9 @@ function LoginContainer(props: LoginContainerProps) {
                     </span>
                   </div>
                   <div className="col-12">
-                    <label htmlFor="password" className="form-label">Password</label>
+                    <label htmlFor="password" className="form-label">
+                      Password
+                    </label>
                     <Field
                       type={isShowPassword ? "text" : "password"}
                       className="form-control fw-light"
@@ -123,22 +143,35 @@ function LoginContainer(props: LoginContainerProps) {
                   <div className="col-12 my-3 d-flex justify-content-between">
                     <div>
                       <input
-                        type="checkbox" id="showPassword"
+                        type="checkbox"
+                        id="showPassword"
                         className="form-check-input me-2"
                         checked={isShowPassword}
-                        onChange={(e) => setShowPassword(e.target.checked)} />
-                      <label htmlFor="showPassword" className="form-label">Show password</label>
+                        onChange={e => setShowPassword(e.target.checked)}
+                      />
+                      <label htmlFor="showPassword" className="form-label">
+                        Show password
+                      </label>
                     </div>
-                    <Link href={pageUrls.forgotPasswordPage} className="mb-0">Forgot Password?</Link>
+                    <Link href={pageUrls.forgotPasswordPage} className="mb-0">
+                      Forgot Password?
+                    </Link>
                   </div>
                   <div className="col-12 mb-3">
-                    <ButtonLoading isLoading={isLoading} className="btn btn-primary w-100" type="submit">
+                    <ButtonLoading
+                      isLoading={isLoading}
+                      className="btn btn-primary w-100"
+                      type="submit">
                       Login
                     </ButtonLoading>
                   </div>
                   <div className="col-12">
-                    <p className="small">Don't have an account? <Link href={pageUrls.registerPage} className="fw-bold">Register
-                      for free</Link></p>
+                    <p className="small">
+                      Don't have an account?{" "}
+                      <Link href={pageUrls.registerPage} className="fw-bold">
+                        Register for free
+                      </Link>
+                    </p>
                   </div>
                 </div>
               </div>

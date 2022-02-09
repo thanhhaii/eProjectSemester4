@@ -21,6 +21,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -35,7 +36,7 @@ import java.util.*;
 public class UserController {
 
     private final UserService iUserService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder bCryptPasswordEncoder;
     private final TokenService iTokenService;
     private final JavaMailSender javaMailSender;
 
@@ -47,8 +48,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Validated @RequestBody SignUp signUp) {
         try {
-            String passwordEncoder = bCryptPasswordEncoder.encode(signUp.getPassword());
-            User user = new User(signUp.getUsername(), signUp.getEmail(), passwordEncoder);
+            User user = new User(signUp.getUsername(), signUp.getEmail(), signUp.getPassword());
             User userCreate = iUserService.saveUser(user);
             iUserService.addRoleToUser(user.getUsername(), ERole.ROLE_USER.toString());
             URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/sign-up").toUriString());

@@ -3,6 +3,7 @@ package com.eproject.backend.services;
 import com.eproject.backend.dtos.users.ChangePassword;
 import com.eproject.backend.dtos.users.UserResponse;
 import com.eproject.backend.dtos.users.UserProfileUpdate;
+import com.eproject.backend.entities.Image;
 import com.eproject.backend.entities.Role;
 import com.eproject.backend.entities.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,4 +33,5 @@ public interface UserService {
     void activeAccount(String userID);
 
     void changePassword(ChangePassword changePassword, String userID) throws Exception;
+
 }

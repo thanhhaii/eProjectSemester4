@@ -25,4 +25,6 @@ public interface ImageRepository extends JpaRepository<Image, String> {
     @Query(value = "select * from image order by created_at desc limit :start, :limit", nativeQuery = true)
     List<Image> getList(@Param("start") int start, @Param("limit") int limit);
 
+    @Query("from Image where user.id = :userID")
+    List<Image> getMyImage(@Param("userID") String userID);
 }

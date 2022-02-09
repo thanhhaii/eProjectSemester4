@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useState } from "react"
 import { Table } from "react-bootstrap"
-import { useAppDispatch, useCategory } from "state/hooks"
+import { useAppDispatch, useAppSelector, useCategory } from "state/hooks"
 import styles from "./ManageCategory.module.scss"
 import { Category } from "models/Categorym"
 import ModalEditCategory from "./ModalEditCategory"
 import serverApi from "services/server"
 import { setCategory } from "state/categorySlice"
+import { isAdminOrMod } from "state/userSlice"
+import { useRouter } from "next/router"
+import pageUrls from "services/pageUrls"
 
 export interface ManageCategoryContainerProps {}
 
@@ -16,6 +19,14 @@ const ManageCategoryContainer = (props: ManageCategoryContainerProps) => {
   const [categoryTarget, setCategoryTarget] = useState<Category | undefined>()
   const [isShowModalEdit, setShowModalEdit] = useState<boolean>(false)
   const dispatch = useAppDispatch()
+  const isManage = useAppSelector(isAdminOrMod)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isManage) {
+      router.push(pageUrls.notFound)
+    }
+  }, [isManage, router])
 
   useEffect(() => {
     setCategories(categoriesList)

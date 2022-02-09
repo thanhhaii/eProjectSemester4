@@ -41,11 +41,9 @@ function AppLayout(props: AppLayoutProps) {
           })
           serverApi.updateImageInfo(
             {
-              description: item.description,
-              fileType: item.fileType,
-              height: item.height,
-              width: item.width,
-              title: item.title,
+              description: item.description || "",
+              categoryIDs: item.categories || [],
+              title: item.title || "",
             },
             item.fileID,
           )

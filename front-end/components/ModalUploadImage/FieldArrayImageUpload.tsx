@@ -79,12 +79,13 @@ const FieldArrayImageUpload = (props: FieldArrayImageUploadProps) => {
 
   const handleUploaded = useCallback(
     (index: number, imageResponse: ImageRef, item: ImageCategoryInfo) => {
-      replace(index, {
-        ...item,
-        ...imageResponse,
-      } as ImageCategoryInfo)
+      form.setFieldValue(`${name}.${index}.url`, imageResponse.url)
+      form.setFieldValue(`${name}.${index}.fileID`, imageResponse.fileID)
+      form.setFieldValue(`${name}.${index}.fileType`, imageResponse.fileType)
+      form.setFieldValue(`${name}.${index}.height`, imageResponse.height)
+      form.setFieldValue(`${name}.${index}.width`, imageResponse.width)
     },
-    [replace],
+    [form, name],
   )
 
   const handleSelectCategories = useCallback(

@@ -14,7 +14,10 @@ const ImageItemRender = (props: ImageItemRenderProps) => {
   const { imageItem, onSelectShowImage } = props
 
   const nameOwner = useMemo(() => {
-    if (imageItem?.userInfo.firstName || imageItem?.userInfo.lastName) {
+    if (
+      imageItem?.userInfo &&
+      (imageItem?.userInfo.firstName || imageItem?.userInfo.lastName)
+    ) {
       return `${imageItem?.userInfo.firstName} ${imageItem?.userInfo.lastName}`
     }
     return imageItem?.username
@@ -34,7 +37,7 @@ const ImageItemRender = (props: ImageItemRenderProps) => {
       <div className={classNames(styles.boxUser)}>
         <div className="d-flex align-items-center">
           <Image
-            src={imageItem.userInfo.avatar || NoUserImage}
+            src={imageItem.userInfo?.avatar || NoUserImage}
             width={40}
             height={40}
             className="rounded-circle"

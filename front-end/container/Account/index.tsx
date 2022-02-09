@@ -12,6 +12,7 @@ import { useAppDispatch, useUser } from "state/hooks"
 import AccountLayout from "components/Layout/Account"
 import { useRouter } from "next/router"
 import { userIdentified } from "state/userSlice"
+import pageUrls from "services/pageUrls"
 
 export interface AccountContainerProps {}
 
@@ -60,8 +61,9 @@ const AccountContainer = (props: AccountContainerProps) => {
       )
       const user = await serverApi.getMe()
       dispatch(userIdentified(user))
+      router.push(pageUrls.profile.myprofile)
     },
-    [dispatch],
+    [dispatch, router],
   )
 
   const formik = useFormik({

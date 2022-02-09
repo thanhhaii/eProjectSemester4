@@ -1,5 +1,7 @@
 package com.eproject.backend;
 
+import com.eproject.backend.services.UserService;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -7,6 +9,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Date;
 
 @SpringBootApplication
 public class BackendApplication {
@@ -16,7 +20,7 @@ public class BackendApplication {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -33,16 +37,16 @@ public class BackendApplication {
         };
     }
 
-//    @Bean
-//    CommandLineRunner run(UserService iUserService) {
-//        return args -> {
+    @Bean
+    CommandLineRunner run(UserService iUserService) {
+        return args -> {
 //            iUserService.saveRole(new Role(new Date(), ERole.ROLE_USER.toString(), new Date()));
 //            iUserService.saveRole(new Role(new Date(), ERole.ROLE_MOD.toString(), new Date()));
 //            iUserService.saveRole(new Role(new Date(), ERole.ROLE_ADMIN.toString(), new Date()));
-//
-//            iUserService.saveUser(new User("admin", "hailamnguyenthanh@gmail.com", "admin", "", false));
-//            iUserService.addRoleToUser("admin", ERole.ROLE_ADMIN.toString());
-//        };
-//    }
+
+//            iUserService.saveUser(new User("admin2", "hailamnguyenthanh2@gmail.com", "admin", "", false));
+//            iUserService.addRoleToUser("admin2", ERole.ROLE_ADMIN.toString());
+        };
+    }
 
 }

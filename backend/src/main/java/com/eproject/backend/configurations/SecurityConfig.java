@@ -6,6 +6,7 @@ import com.eproject.backend.filters.CustomAuthorizationFilter;
 import com.eproject.backend.services.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,22 +16,24 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 @Slf4j
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserServiceImpl UserServiceImpl;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private UserServiceImpl UserServiceImpl;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(UserServiceImpl).passwordEncoder(bCryptPasswordEncoder);
+        auth.userDetailsService(UserServiceImpl).passwordEncoder(passwordEncoder);
     }
 
     @Override
@@ -48,8 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(GET, "/users/me").hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())
                 .antMatchers("/users/verify-email").hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString());
         http.authorizeRequests().antMatchers(GET, "/categories/**").permitAll()
-                .antMatchers(POST, "/categories").hasAnyAuthority(ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())
-                .antMatchers(PUT, "/categories").hasAnyAuthority(ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())
+                .antMatchers(POST, "/categories").permitAll()
+                .antMatchers(PUT, "/categories").permitAll()
                 .antMatchers(DELETE, "/categories/{id}").hasAnyAuthority(ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString())
                 .antMatchers(POST, "/categories/add-category-image").hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_ADMIN.toString(), ERole.ROLE_MOD.toString());
 
@@ -60,6 +63,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(DELETE, "/images/{id}")
                 .hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_MOD.toString(), ERole.ROLE_ADMIN.toString())
                 .antMatchers(PUT, "images/update-info/{id}")
+                .hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_MOD.toString(), ERole.ROLE_ADMIN.toString())
+                .antMatchers(GET, "/images/my-image")
                 .hasAnyAuthority(ERole.ROLE_USER.toString(), ERole.ROLE_MOD.toString(), ERole.ROLE_ADMIN.toString());
 
         http.authorizeRequests().antMatchers("/collections")

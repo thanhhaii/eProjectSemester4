@@ -46,7 +46,12 @@ public class CollectionServiceImpl implements CollectionService{
 
     @Override
     public boolean checkExistInCollection(String ownerID, String imageID) {
-        Collection collection = collectionRepository.getCollectionByOwnerID(ownerID);
+        Collection collection;
+        if(!collectionRepository.hasCollection(ownerID)){
+            collection = collectionRepository.save(new Collection(ownerID));
+        }else {
+            collection = collectionRepository.getCollectionByOwnerID(ownerID);
+        }
         return imageCollectionRepository.checkImageExistOnCollection(collection.getId(), imageID);
     }
 }

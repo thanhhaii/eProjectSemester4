@@ -12,6 +12,7 @@ import classNames from "classnames"
 import dynamic from "next/dynamic"
 import { useUser } from "state/hooks"
 import { UpdateImageInfo } from "models/FormValuem"
+import LoadMoreButton from "components/ButtonLoadmore"
 
 const ModalShowImage = dynamic(() => import("components/ModalShowImage"), {
   ssr: false,
@@ -32,10 +33,20 @@ const fetchImages = async (params: QueryFunctionContext<QueryKey, number>) => {
   const { queryKey, pageParam } = params
   const [, { keyword }] = queryKey
   const resp = await serverApi.getImages({
-    keyword: keyword || "",
     start: pageParam || 0,
   })
-  return resp
+
+  if (!keyword) {
+    return resp
+  }
+
+  return resp.filter(
+    image =>
+      image.imageInfo?.title?.toLowerCase().includes(keyword.toLowerCase()) ||
+      image.imageInfo?.description
+        ?.toLowerCase()
+        .includes(keyword.toLowerCase()),
+  )
 }
 
 const HomePageContainer = (props: HomePageContainerProps) => {
@@ -75,6 +86,15 @@ const HomePageContainer = (props: HomePageContainerProps) => {
       refetchOnReconnect: true,
     },
   )
+
+  const isLoading = isFetching || isFetchingNextPage || status === "loading"
+
+  const loadMore = useCallback(() => {
+    if (!isLoading && data?.pages?.length) {
+      currentPage.current = currentPage.current + 1
+      fetchNextPage()
+    }
+  }, [isLoading, data?.pages?.length, fetchNextPage])
 
   useEffect(() => {
     setImages(
@@ -145,6 +165,9 @@ const HomePageContainer = (props: HomePageContainerProps) => {
           objectPosition="top"
           priority
         />
+        <div className={styles.boxSearch}>
+          <input type="text" className="form-control shadow-none" placeholder="Search resource"/>
+        </div>
       </div>
       <div className={classNames("mt-5 container", styles.boxRenderImage)}>
         <Masonry
@@ -161,6 +184,15 @@ const HomePageContainer = (props: HomePageContainerProps) => {
             )
           })}
         </Masonry>
+      </div>
+      <div className="d-flex justify-content-center">
+        {images && images.length > 0 ? (
+          <LoadMoreButton
+            isLoading={isLoading}
+            loadMore={loadMore}
+            hasMore={!!hasNextPage}
+          />
+        ) : null}
       </div>
       <ModalShowImage
         onCheckExistInCollection={handleCheckExistCollection}

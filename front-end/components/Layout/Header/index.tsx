@@ -4,7 +4,7 @@ import Image from "next/image"
 import NoUserImage from "public/images/noUser.png"
 import { IconMenu2, IconSearch } from "@tabler/icons"
 import Dropdown from "react-bootstrap/Dropdown"
-import { forwardRef, LegacyRef, ReactNode, useCallback } from "react"
+import { forwardRef, LegacyRef, ReactNode, useCallback, useState } from "react"
 import Link from "../../Link"
 import { useAppDispatch, useAppSelector } from "state/hooks"
 import { isAdminOrMod, selectUserSigned } from "state/userSlice"
@@ -28,12 +28,17 @@ function HeaderLayout(props: HeaderLayoutProps) {
   const dispatch = useAppDispatch()
   const router = useRouter()
   const isManage = useAppSelector(isAdminOrMod)
+  const [keyword, setKeyword] = useState<string>("")
 
   const handleLogout = useCallback(() => {
     tokenManager.logout()
     dispatch(userIdentified(null))
     router.replace(pageUrls.loginPage)
   }, [dispatch, router])
+
+  const handleSearchImage = useCallback(e => {
+    setKeyword(e.target.value)
+  }, [])
 
   return (
     <div
@@ -53,6 +58,8 @@ function HeaderLayout(props: HeaderLayoutProps) {
               className="form-control shadow-none"
               placeholder="Search resource"
               id={styles.searchResource}
+              value={keyword}
+              onChange={handleSearchImage}
             />
             <IconSearch
               className={classNames("position-absolute", styles.iconSearch)}
@@ -123,13 +130,15 @@ function HeaderLayout(props: HeaderLayoutProps) {
               })}>
               Editorial
             </Link>
-            <Link
-              href={pageUrls.collection}
-              className={classNames("ms-2", styles.linkDefault, {
-                "text-dark": router.pathname === pageUrls.collection,
-              })}>
-              Favorite
-            </Link>
+            {user && (
+              <Link
+                href={pageUrls.collection}
+                className={classNames("ms-2", styles.linkDefault, {
+                  "text-dark": router.pathname === pageUrls.collection,
+                })}>
+                Favorite
+              </Link>
+            )}
           </div>
           <div className="col">
             <ul className={styles.listCategory}>
